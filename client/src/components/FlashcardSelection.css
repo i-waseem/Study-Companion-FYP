@@ -1,0 +1,164 @@
+.flashcard-selection-container {
+  width: calc(100% - 50px);
+  margin-left: 50px;
+  min-height: calc(100vh - 64px);
+  padding: 2rem;
+  background: #f0f2f5;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.flashcard-setup-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 100%;
+  max-width: 800px;
+}
+
+.flashcard-setup-container h2.ant-typography {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #1e3c72;
+  font-weight: 600;
+}
+
+.flashcard-selection-form .form-item {
+  margin-bottom: 1.5rem;
+}
+
+.flashcard-selection-form .ant-select {
+  margin-bottom: 0;
+}
+
+.flashcard-selection-form .ant-btn-primary {
+  background: #1e3c72;
+  border: none;
+  height: 40px;
+  font-weight: 500;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.flashcard-selection-form .ant-btn-primary:hover:not(:disabled) {
+  background: #2a5298;
+}
+
+.flashcard-selection-form .ant-btn-primary:disabled {
+  background: #d9d9d9;
+  color: rgba(0, 0, 0, 0.25);
+}
+
+.form-item {
+  margin-bottom: 1.5rem;
+}
+
+.form-item label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #1e3c72;
+}
+
+/* Ant Design Select customization */
+.ant-select-selector {
+  border-radius: 6px !important;
+}
+
+.ant-select-selection-placeholder {
+  color: #8c8c8c !important;
+}
+
+/* Step indicator styles */
+.steps-container {
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.step-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #595959;
+  transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+  background: #1e3c72;
+  color: white;
+}
+
+.step-text {
+  font-size: 14px;
+  color: #8c8c8c;
+  transition: color 0.3s ease;
+}
+
+.step.active .step-text {
+  color: #1e3c72;
+  font-weight: 500;
+}
+
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background: #f0f0f0;
+  margin: 0 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.flashcard-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.flashcard-loading p {
+  color: #595959;
+  margin: 0;
+}
+
+/* Button customization */
+.ant-btn-primary {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  border: none;
+  height: 40px;
+  font-size: 16px;
+  font-weight: 500;
+  text-shadow: none;
+  border-radius: 6px;
+}
+
+.ant-btn-primary:hover {
+  background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+}

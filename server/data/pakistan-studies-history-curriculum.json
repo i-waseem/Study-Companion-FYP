@@ -1,0 +1,156 @@
+{
+  "gradeLevel": "O-Level",
+  "subject": "Pakistan Studies - History",
+  "topics": [
+    {
+      "name": "Cultural and Historical Background to the Pakistan Movement",
+      "subtopics": [
+        {
+          "name": "Religious Thinkers and the Spread of Islam",
+          "description": "Understanding the influence of key religious thinkers on the spread of Islam in the subcontinent",
+          "learningObjectives": [
+            "Analyze the contributions of Shah Waliullah",
+            "Evaluate the impact of Syed Ahmad Barelvi",
+            "Understand the role of Haji Shariatullah"
+          ]
+        },
+        {
+          "name": "Decline of the Mughal Empire",
+          "description": "Understanding the factors leading to the decline of Mughal rule",
+          "learningObjectives": [
+            "Analyze Aurangzeb's policies and their impact",
+            "Evaluate the role of the East India Company",
+            "Understand the consequences of Mughal decline"
+          ]
+        },
+        {
+          "name": "War of Independence 1857-58",
+          "description": "Understanding the first major uprising against British rule",
+          "learningObjectives": [
+            "Identify the causes of the War of Independence",
+            "Analyze the consequences of the uprising",
+            "Evaluate the British reaction and subsequent policies"
+          ]
+        },
+        {
+          "name": "Sir Syed Ahmad Khan and the Aligarh Movement",
+          "description": "Understanding the educational and social reforms",
+          "learningObjectives": [
+            "Analyze Sir Syed's educational reforms",
+            "Evaluate the impact of the Aligarh Movement",
+            "Understand the modernization of Muslim education"
+          ]
+        },
+        {
+          "name": "Urdu and Regional Languages",
+          "description": "Understanding the role of languages in Pakistan's cultural identity",
+          "learningObjectives": [
+            "Analyze the importance of Urdu in Pakistan's culture",
+            "Evaluate the role of regional languages",
+            "Understand linguistic diversity in Pakistan"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "The Emergence of Pakistan (1906–1947)",
+      "subtopics": [
+        {
+          "name": "Formation of the Muslim League",
+          "description": "Understanding the establishment of the All-India Muslim League",
+          "learningObjectives": [
+            "Analyze the reasons for forming the Muslim League",
+            "Evaluate its early objectives and leadership",
+            "Understand its role in Muslim political representation"
+          ]
+        },
+        {
+          "name": "Early Political Developments",
+          "description": "Understanding key political events and reforms",
+          "learningObjectives": [
+            "Analyze the Partition of Bengal and Simla Deputation",
+            "Evaluate the Lucknow Pact and its significance",
+            "Understand the Montagu-Chelmsford Reforms and Khilafat Movement"
+          ]
+        },
+        {
+          "name": "Constitutional Developments",
+          "description": "Understanding major constitutional milestones",
+          "learningObjectives": [
+            "Analyze Jinnah's 14 Points",
+            "Evaluate the Round Table Conferences",
+            "Understand the Government of India Act 1935"
+          ]
+        },
+        {
+          "name": "Path to Independence",
+          "description": "Understanding the final phase of the independence movement",
+          "learningObjectives": [
+            "Analyze the Pakistan Resolution of 1940",
+            "Evaluate the Cabinet Mission Plan",
+            "Understand the significance of Direct Action Day"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Nationhood (1947–1999)",
+      "subtopics": [
+        {
+          "name": "Early Challenges",
+          "description": "Understanding initial challenges faced by Pakistan",
+          "learningObjectives": [
+            "Analyze the refugee crisis and its management",
+            "Evaluate the Kashmir conflict and its implications",
+            "Understand the administrative challenges"
+          ]
+        },
+        {
+          "name": "Political Evolution",
+          "description": "Understanding Pakistan's political development",
+          "learningObjectives": [
+            "Analyze various constitutional crises",
+            "Evaluate the impact of military coups",
+            "Understand the role of political institutions"
+          ]
+        },
+        {
+          "name": "Key Leadership",
+          "description": "Understanding the role of major political leaders",
+          "learningObjectives": [
+            "Analyze Jinnah's leadership and vision",
+            "Evaluate contributions of Liaquat Ali Khan and Bhutto",
+            "Understand the impact of Zia-ul-Haq's policies"
+          ]
+        },
+        {
+          "name": "Formation of Bangladesh",
+          "description": "Understanding the events leading to Pakistan's division",
+          "learningObjectives": [
+            "Analyze the causes of East Pakistan's separation",
+            "Evaluate the impact of the 1971 war",
+            "Understand the consequences of Bangladesh's formation"
+          ]
+        },
+        {
+          "name": "Economic and Social Development",
+          "description": "Understanding Pakistan's development policies",
+          "learningObjectives": [
+            "Analyze major economic reforms",
+            "Evaluate social policy changes",
+            "Understand development challenges"
+          ]
+        },
+        {
+          "name": "Foreign Relations",
+          "description": "Understanding Pakistan's international relations",
+          "learningObjectives": [
+            "Analyze relations with India and the USA",
+            "Evaluate ties with China and other nations",
+            "Understand Pakistan's role in the UN"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,212 @@
+{
+  "curricula": [
+    {
+      "gradeLevel": "O-Level",
+      "subject": "Computer Science",
+      "topics": [
+        {
+          "name": "Computer Systems",
+          "subtopics": [
+            {
+              "name": "Hardware",
+              "learningObjectives": [
+                "Understand the components of a computer system",
+                "Describe the function of CPU, memory, and storage",
+                "Explain input and output devices",
+                "Compare different types of computer systems"
+              ]
+            },
+            {
+              "name": "Software",
+              "learningObjectives": [
+                "Distinguish between system and application software",
+                "Explain the role of operating systems",
+                "Understand software development tools",
+                "Describe different types of programming languages"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Programming",
+          "subtopics": [
+            {
+              "name": "Algorithms",
+              "learningObjectives": [
+                "Understand algorithm design principles",
+                "Write pseudocode and flowcharts",
+                "Analyze algorithm efficiency",
+                "Implement basic sorting and searching algorithms"
+              ]
+            },
+            {
+              "name": "Python Programming",
+              "learningObjectives": [
+                "Write basic Python programs",
+                "Use variables and data types",
+                "Implement control structures",
+                "Create functions and modules"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "gradeLevel": "O-Level",
+      "subject": "Economics",
+      "topics": [
+        {
+          "name": "Basic Economic Concepts",
+          "subtopics": [
+            {
+              "name": "Scarcity and Choice",
+              "learningObjectives": [
+                "Understand the concept of scarcity",
+                "Explain opportunity cost",
+                "Analyze economic systems",
+                "Describe factors of production"
+              ]
+            },
+            {
+              "name": "Supply and Demand",
+              "learningObjectives": [
+                "Understand market equilibrium",
+                "Analyze price elasticity",
+                "Explain market forces",
+                "Calculate consumer and producer surplus"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Macroeconomics",
+          "subtopics": [
+            {
+              "name": "National Income",
+              "learningObjectives": [
+                "Calculate GDP and GNP",
+                "Understand economic indicators",
+                "Analyze economic growth",
+                "Explain business cycles"
+              ]
+            },
+            {
+              "name": "Money and Banking",
+              "learningObjectives": [
+                "Understand monetary policy",
+                "Explain banking systems",
+                "Analyze interest rates",
+                "Describe inflation and deflation"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "gradeLevel": "O-Level",
+      "subject": "History",
+      "topics": [
+        {
+          "name": "Pakistan Movement",
+          "subtopics": [
+            {
+              "name": "Early Muslim Nationalism",
+              "learningObjectives": [
+                "Understand the Two-Nation Theory",
+                "Analyze the role of Sir Syed Ahmad Khan",
+                "Explain the formation of Muslim League",
+                "Describe the Khilafat Movement"
+              ]
+            },
+            {
+              "name": "Road to Independence",
+              "learningObjectives": [
+                "Analyze the Pakistan Resolution",
+                "Understand the role of Quaid-e-Azam",
+                "Explain the partition plan",
+                "Describe the challenges of early independence"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Post-Independence Era",
+          "subtopics": [
+            {
+              "name": "Early Challenges",
+              "learningObjectives": [
+                "Understand refugee settlement issues",
+                "Analyze economic challenges",
+                "Explain constitutional development",
+                "Describe foreign relations"
+              ]
+            },
+            {
+              "name": "Political Development",
+              "learningObjectives": [
+                "Analyze various constitutions",
+                "Understand martial law periods",
+                "Explain democratic transitions",
+                "Describe major political events"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "gradeLevel": "O-Level",
+      "subject": "Geography",
+      "topics": [
+        {
+          "name": "Physical Geography",
+          "subtopics": [
+            {
+              "name": "Topography",
+              "learningObjectives": [
+                "Understand Pakistan's major landforms",
+                "Analyze mountain ranges and passes",
+                "Explain river systems",
+                "Describe coastal areas"
+              ]
+            },
+            {
+              "name": "Climate",
+              "learningObjectives": [
+                "Understand climate patterns",
+                "Analyze monsoon system",
+                "Explain temperature variations",
+                "Describe rainfall distribution"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Economic Geography",
+          "subtopics": [
+            {
+              "name": "Agriculture",
+              "learningObjectives": [
+                "Understand major crops",
+                "Analyze irrigation systems",
+                "Explain farming methods",
+                "Describe agricultural challenges"
+              ]
+            },
+            {
+              "name": "Industry",
+              "learningObjectives": [
+                "Analyze industrial zones",
+                "Understand major industries",
+                "Explain industrial development",
+                "Describe economic corridors"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

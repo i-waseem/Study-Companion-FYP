@@ -1,0 +1,446 @@
+.home-layout {
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #f5f5f5;
+}
+
+.home-content {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Welcome Card */
+.welcome-row {
+  padding: 0;
+}
+
+.welcome-section {
+  margin-bottom: 1rem;
+}
+
+.brand-card,
+.quote-card {
+  text-align: center;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  padding: 0.75rem;
+  width: 100%;
+}
+
+.brand-card {
+  margin-bottom: 1rem;
+}
+
+.quote-card {
+  margin-top: 20px;
+  text-align: center;
+  padding: 1rem 1.5rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.quote-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #2E8B57 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 16px;
+  font-size: 1.5em;
+}
+
+.quote-text {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0 0 0.5rem 0;
+  font-style: italic;
+  line-height: 1.4;
+  position: relative;
+  padding: 0 0.75rem;
+  font-size: 1.2em;
+  line-height: 1.6;
+  color: #2d3748;
+  font-style: italic;
+  margin: 16px 0;
+}
+
+.quote-text.error {
+  color: #e53e3e;
+}
+
+.quote-text::before,
+.quote-text::after {
+  content: '"';
+  font-size: 1.3em;
+  color: #1e3c72;
+  opacity: 0.3;
+  position: absolute;
+}
+
+.quote-text::before {
+  left: -0.25rem;
+  top: -0.25rem;
+}
+
+.quote-text::after {
+  right: -0.25rem;
+  bottom: -0.25rem;
+}
+
+.quote-attribution {
+  align-self: flex-end;
+  font-style: italic;
+  color: #666;
+  margin: 0;
+  font-size: 0.9rem;
+  color: #718096;
+  margin-top: 8px;
+}
+
+.quote-card .ant-btn-link {
+  margin-top: 8px;
+  color: #4a5568;
+}
+
+.quote-card .ant-btn-link:hover {
+  color: #2b6cb0;
+}
+
+.brand-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.brand-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.brand-content h1 {
+  font-size: 2.75rem;
+  font-weight: 650;
+  margin: 0;
+  line-height: 1;
+  white-space: nowrap;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #2E8B57 100%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  overflow: hidden;
+  border-radius: 50%;
+  position: relative;
+  background: linear-gradient(45deg, #1e3c72, #2a5298, #2E8B57, #1e3c72);
+  padding: 0.2rem;
+  box-shadow: 0 0 1rem rgba(42, 82, 152, 0.3);
+}
+
+.brand-logo::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  bottom: -4px;
+  left: -4px;
+  background: linear-gradient(45deg, #1e3c72, #2a5298, #2E8B57, #1e3c72);
+  border-radius: 50%;
+  z-index: -1;
+  background-size: 300% 300%;
+  animation: gradientBorder 2s ease infinite;
+}
+
+@keyframes gradientBorder {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.ai-badge {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #2E8B57 100%);
+  color: white;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 1rem;
+  margin-top: -0.25rem;
+  font-weight: 500;
+  margin: 0.25rem auto 0;
+  width: fit-content;
+}
+
+.gemini-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #4285f4, #34a853, #fbbc05, #ea4335);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-card h1 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: #1a1a1a;
+}
+
+/* Main Content Row */
+.main-content-row {
+  margin-top: 0;
+}
+
+.main-content-section {
+  margin-bottom: 1rem;
+}
+
+/* Progress Card */
+.progress-card {
+  margin: 0;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.1);
+}
+
+.progress-card .ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.progress-card .ant-statistic {
+  text-align: center;
+}
+
+.progress-card .ant-statistic-title {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.progress-card .ant-statistic-content {
+  color: #1a1a1a;
+  font-size: 1.5rem;
+}
+
+/* Activity Card */
+.activity-card {
+  margin-top: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.1);
+}
+
+.activity-card .ant-timeline {
+  padding: 1rem;
+}
+
+/* Calendar Card */
+.calendar-card {
+  margin: 0;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.1);
+}
+
+.calendar-wrapper {
+  padding: 0;
+}
+
+.calendar-card .ant-picker-calendar {
+  font-size: 0.6875rem;
+}
+
+.calendar-card .ant-picker-calendar-header {
+  padding: 0.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  min-height: auto;
+}
+
+.calendar-card .ant-picker-calendar-header .ant-picker-calendar-mode-switch {
+  display: none;
+}
+
+.calendar-card .ant-picker-panel {
+  border: none;
+}
+
+.calendar-card .ant-picker-date-panel .ant-picker-content {
+  height: auto;
+}
+
+.calendar-card .ant-picker-calendar-date {
+  height: 1.25rem;
+  line-height: 1.25rem;
+  margin: 0;
+  padding: 0.125rem;
+}
+
+.calendar-card .ant-picker-cell {
+  padding: 0.125rem 0;
+}
+
+.calendar-card .ant-picker-calendar-date-value {
+  height: 1.25rem;
+  width: 1.25rem;
+  line-height: 1.25rem;
+  margin: 0 auto;
+}
+
+.calendar-card .ant-picker-calendar-date-today {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.calendar-card .ant-card-head {
+  min-height: auto;
+  padding: 0.5rem 0.75rem;
+}
+
+.calendar-card .ant-card-head-title {
+  padding: 0;
+  font-size: 0.875rem;
+}
+
+/* Quick Links Card */
+.quick-links-card {
+  margin: 0;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.1);
+}
+
+.quick-links-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.quick-links-wrapper .ant-btn {
+  text-align: left;
+  height: auto;
+  padding: 0.5rem;
+}
+
+/* Action Cards */
+.actions-section {
+  margin-bottom: 1rem;
+}
+
+.action-card {
+  height: 160px;
+  text-align: center;
+  background: white;
+  border-radius: 12px;
+  padding: 1.25rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.action-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.action-card h3 {
+  font-size: 1.25rem;
+  margin: 0.5rem 0;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #2E8B57 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.action-card p {
+  color: #666;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.card-icon {
+  font-size: 1.75rem;
+  color: #1e3c72;
+}
+
+.mini-timeline {
+  font-size: 0.85rem;
+  text-align: left;
+  color: #666;
+}
+
+.whats-new-card .mini-timeline {
+  margin-top: 0.5rem;
+}
+
+.whats-new-card {
+  cursor: default;
+}
+
+.brand-section h1 {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #2E8B57 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 62rem) {
+  .home-layout {
+    padding: 1rem;
+  }
+  
+  .welcome-card h1 {
+    font-size: 1.5rem;
+  }
+  
+  .progress-card .ant-statistic-content {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 36rem) {
+  .home-layout {
+    padding: 0.75rem;
+  }
+  
+  .welcome-card h1 {
+    font-size: 1.25rem;
+  }
+}

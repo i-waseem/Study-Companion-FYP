@@ -1,0 +1,351 @@
+{
+  "gradeLevel": "O-Level",
+  "subject": "Economics",
+  "topics": [
+    {
+      "name": "The Basic Economic Problem",
+      "subtopics": [
+        {
+          "name": "Nature of the Basic Economic Problem",
+          "description": "Understanding the fundamental concepts of scarcity and economic decision-making",
+          "learningObjectives": [
+            "Define and explain the concept of scarcity",
+            "Understand the relationship between finite resources and infinite wants",
+            "Analyze economic decision-making processes of consumers, workers, firms, and governments"
+          ]
+        },
+        {
+          "name": "Factors of Production",
+          "description": "Understanding the four main factors of production and their rewards",
+          "learningObjectives": [
+            "Identify and explain the four factors of production: land, labour, capital, and enterprise",
+            "Understand the rewards for each factor: rent, wages, interest, and profit",
+            "Analyze the quantity and quality of factors of production"
+          ]
+        },
+        {
+          "name": "Opportunity Cost",
+          "description": "Understanding the concept of opportunity cost and its application",
+          "learningObjectives": [
+            "Define opportunity cost and provide relevant examples",
+            "Analyze how opportunity cost influences decision-making for consumers, firms, and government",
+            "Apply the concept of opportunity cost to real-world scenarios"
+          ]
+        },
+        {
+          "name": "Production Possibility Curve (PPC)",
+          "description": "Understanding and interpreting the Production Possibility Curve",
+          "learningObjectives": [
+            "Define and interpret the Production Possibility Curve",
+            "Analyze movements along and shifts in the PPC",
+            "Understand how economic growth is represented using the PPC"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "The Allocation of Resources",
+      "subtopics": [
+        {
+          "name": "Market Mechanism",
+          "description": "Understanding how markets allocate resources",
+          "learningObjectives": [
+            "Explain the role of demand and supply in resource allocation",
+            "Analyze different types of markets and their characteristics",
+            "Understand market efficiency and resource allocation"
+          ]
+        },
+        {
+          "name": "Demand",
+          "description": "Understanding demand and its determinants",
+          "learningObjectives": [
+            "Differentiate between individual and market demand",
+            "Analyze movements along and shifts in the demand curve",
+            "Identify and explain the determinants of demand"
+          ]
+        },
+        {
+          "name": "Supply",
+          "description": "Understanding supply and its determinants",
+          "learningObjectives": [
+            "Differentiate between individual and market supply",
+            "Analyze movements along and shifts in the supply curve",
+            "Identify and explain the determinants of supply"
+          ]
+        },
+        {
+          "name": "Price Determination",
+          "description": "Understanding market equilibrium and disequilibrium",
+          "learningObjectives": [
+            "Explain market equilibrium through demand and supply intersection",
+            "Analyze market disequilibrium conditions",
+            "Understand the concepts of shortages and surpluses"
+          ]
+        },
+        {
+          "name": "Price Elasticity of Demand (PED)",
+          "description": "Understanding price elasticity of demand and its implications",
+          "learningObjectives": [
+            "Define, calculate and interpret PED",
+            "Analyze factors affecting PED",
+            "Understand implications for revenue and consumer spending"
+          ]
+        },
+        {
+          "name": "Price Elasticity of Supply (PES)",
+          "description": "Understanding price elasticity of supply and its determinants",
+          "learningObjectives": [
+            "Define, calculate and interpret PES",
+            "Analyze determinants of PES",
+            "Understand its role in economic decision-making"
+          ]
+        },
+        {
+          "name": "Market Economic System",
+          "description": "Understanding market economic systems",
+          "learningObjectives": [
+            "Identify characteristics of market economic systems",
+            "Analyze advantages and disadvantages",
+            "Understand market efficiency and resource allocation"
+          ]
+        },
+        {
+          "name": "Market Failure",
+          "description": "Understanding market failure and its implications",
+          "learningObjectives": [
+            "Understand public goods, merit goods, and demerit goods",
+            "Analyze private and social costs/benefits",
+            "Identify causes and consequences of market failure"
+          ]
+        },
+        {
+          "name": "Mixed Economic System",
+          "description": "Understanding government intervention in the economy",
+          "learningObjectives": [
+            "Explain different methods of government intervention",
+            "Analyze taxation, subsidies, and regulation",
+            "Understand price controls and their effects"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Microeconomic Decision-Makers",
+      "subtopics": [
+        {
+          "name": "Money and Banking",
+          "description": "Understanding the role of money and banking system",
+          "learningObjectives": [
+            "Explain the functions of money",
+            "Understand the role of central banks",
+            "Analyze the functions of commercial banks"
+          ]
+        },
+        {
+          "name": "Households",
+          "description": "Understanding household economic decisions",
+          "learningObjectives": [
+            "Analyze spending, saving, and borrowing patterns",
+            "Identify factors influencing financial decisions",
+            "Understand household economic behavior"
+          ]
+        },
+        {
+          "name": "Workers",
+          "description": "Understanding labor market dynamics",
+          "learningObjectives": [
+            "Analyze factors affecting occupation choice and wages",
+            "Understand trade unions and wage negotiations",
+            "Explain causes of wage differences"
+          ]
+        },
+        {
+          "name": "Firms",
+          "description": "Understanding business organizations and growth",
+          "learningObjectives": [
+            "Differentiate between types of firms",
+            "Analyze business growth and mergers",
+            "Understand economies and diseconomies of scale"
+          ]
+        },
+        {
+          "name": "Firms and Production",
+          "description": "Understanding production methods and productivity",
+          "learningObjectives": [
+            "Compare labour-intensive and capital-intensive production",
+            "Analyze productivity and its factors",
+            "Understand production efficiency"
+          ]
+        },
+        {
+          "name": "Costs, Revenue, and Profit",
+          "description": "Understanding business finance and profitability",
+          "learningObjectives": [
+            "Understand different cost concepts",
+            "Calculate revenue and profit",
+            "Analyze profit maximization strategies"
+          ]
+        },
+        {
+          "name": "Types of Markets",
+          "description": "Understanding market structures",
+          "learningObjectives": [
+            "Compare competitive markets and monopolies",
+            "Analyze market characteristics",
+            "Understand advantages and disadvantages of different market structures"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Government and the Macroeconomy",
+      "subtopics": [
+        {
+          "name": "Government Macroeconomic Intervention",
+          "description": "Understanding government's role in the economy",
+          "learningObjectives": [
+            "Identify key macroeconomic aims",
+            "Analyze economic growth, employment, and price stability",
+            "Understand trade-offs between economic objectives"
+          ]
+        },
+        {
+          "name": "Fiscal Policy",
+          "description": "Understanding government fiscal policy",
+          "learningObjectives": [
+            "Analyze government revenue and spending",
+            "Understand different types of taxation",
+            "Evaluate effects of taxation on the economy"
+          ]
+        },
+        {
+          "name": "Monetary Policy",
+          "description": "Understanding monetary policy tools",
+          "learningObjectives": [
+            "Analyze interest rates and money supply",
+            "Understand exchange rate control",
+            "Evaluate effectiveness of monetary policy"
+          ]
+        },
+        {
+          "name": "Supply-Side Policy",
+          "description": "Understanding supply-side economic policies",
+          "learningObjectives": [
+            "Analyze education and infrastructure policies",
+            "Understand deregulation and its effects",
+            "Evaluate effectiveness in boosting growth"
+          ]
+        },
+        {
+          "name": "Economic Growth",
+          "description": "Understanding economic growth and cycles",
+          "learningObjectives": [
+            "Define and measure GDP",
+            "Analyze causes and consequences of growth",
+            "Understand economic cycles"
+          ]
+        },
+        {
+          "name": "Employment and Unemployment",
+          "description": "Understanding labor market conditions",
+          "learningObjectives": [
+            "Identify types of unemployment",
+            "Understand unemployment measurement",
+            "Analyze effects on the economy"
+          ]
+        },
+        {
+          "name": "Inflation",
+          "description": "Understanding inflation and its effects",
+          "learningObjectives": [
+            "Define and identify causes of inflation",
+            "Analyze consequences for the economy",
+            "Understand inflation control measures"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Economic Development",
+      "subtopics": [
+        {
+          "name": "Living Standards",
+          "description": "Understanding and measuring living standards",
+          "learningObjectives": [
+            "Compare GDP per capita and HDI",
+            "Analyze living standards across countries",
+            "Understand development indicators"
+          ]
+        },
+        {
+          "name": "Poverty",
+          "description": "Understanding poverty and its solutions",
+          "learningObjectives": [
+            "Differentiate between absolute and relative poverty",
+            "Analyze causes of poverty",
+            "Evaluate solutions through education, healthcare, and taxation"
+          ]
+        },
+        {
+          "name": "Population and Economic Development",
+          "description": "Understanding population dynamics",
+          "learningObjectives": [
+            "Analyze birth rates, death rates, and migration",
+            "Understand population growth",
+            "Evaluate economic impact of population changes"
+          ]
+        },
+        {
+          "name": "Differences in Economic Development",
+          "description": "Understanding development factors",
+          "learningObjectives": [
+            "Analyze factors affecting development",
+            "Understand role of resources and investment",
+            "Evaluate impact of trade on development"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "International Trade and Globalization",
+      "subtopics": [
+        {
+          "name": "Specialization and Free Trade",
+          "description": "Understanding international trade principles",
+          "learningObjectives": [
+            "Analyze advantages of specialization",
+            "Understand benefits of free trade",
+            "Evaluate disadvantages and limitations"
+          ]
+        },
+        {
+          "name": "Globalization and Trade Restrictions",
+          "description": "Understanding global trade dynamics",
+          "learningObjectives": [
+            "Analyze role of multinational corporations",
+            "Understand trade barriers",
+            "Evaluate impact of tariffs, quotas, and subsidies"
+          ]
+        },
+        {
+          "name": "Foreign Exchange Rates",
+          "description": "Understanding exchange rate systems",
+          "learningObjectives": [
+            "Compare floating and fixed exchange rates",
+            "Analyze factors affecting exchange rates",
+            "Understand impact on international trade"
+          ]
+        },
+        {
+          "name": "Balance of Payments",
+          "description": "Understanding international payments",
+          "learningObjectives": [
+            "Analyze trade in goods and services",
+            "Understand current account balance",
+            "Evaluate policies for trade stability"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "Mathematics": {
+    "Algebra": {
+      "Linear Equations": {
+        "questions": [
+          {
+            "type": "multiple_choice",
+            "question": "What is the solution to the equation 2x + 3 = 7?",
+            "options": [
+              "x = 2",
+              "x = 3",
+              "x = 4",
+              "x = 5"
+            ],
+            "correctAnswer": 0,
+            "explanation": "To solve 2x + 3 = 7:\n1. Subtract 3 from both sides: 2x = 4\n2. Divide both sides by 2: x = 2",
+            "difficulty": "medium"
+          },
+          {
+            "type": "true_false",
+            "statement": "In the equation y = mx + b, 'm' represents the y-intercept.",
+            "isTrue": false,
+            "explanation": "'m' represents the slope of the line, while 'b' represents the y-intercept.",
+            "difficulty": "easy"
+          }
+        ]
+      }
+    }
+  },
+  "Physics": {
+    "Forces": {
+      "Newton's Laws": {
+        "questions": [
+          {
+            "type": "multiple_choice",
+            "question": "Which of Newton's laws states that 'For every action, there is an equal and opposite reaction'?",
+            "options": [
+              "First Law",
+              "Second Law",
+              "Third Law",
+              "Fourth Law"
+            ],
+            "correctAnswer": 2,
+            "explanation": "This is Newton's Third Law of Motion. It states that when one object exerts a force on another object, the second object exerts an equal and opposite force on the first.",
+            "difficulty": "medium"
+          },
+          {
+            "type": "short_answer",
+            "question": "Explain Newton's First Law of Motion.",
+            "modelAnswer": "Newton's First Law states that an object will remain at rest or in uniform motion in a straight line unless acted upon by an external force. This is also known as the law of inertia.",
+            "keyPoints": [
+              "Objects at rest stay at rest",
+              "Objects in motion stay in motion",
+              "External force is needed to change state",
+              "Also called the law of inertia"
+            ],
+            "difficulty": "medium"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,203 @@
+{
+  "gradeLevel": "O-Level",
+  "subject": "Pakistan Studies - Geography",
+  "topics": [
+    {
+      "name": "The Land of Pakistan",
+      "subtopics": [
+        {
+          "name": "Physical Geography",
+          "description": "Understanding Pakistan's geographical features and location",
+          "learningObjectives": [
+            "Identify Pakistan's geographic location and provinces",
+            "Analyze major cities and landforms",
+            "Understand the river systems and climate patterns"
+          ]
+        },
+        {
+          "name": "Natural Resources",
+          "description": "Understanding Pakistan's natural resource distribution",
+          "learningObjectives": [
+            "Identify major natural resources",
+            "Analyze their distribution across regions",
+            "Understand sustainable resource management"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Natural Resources and Sustainability",
+      "subtopics": [
+        {
+          "name": "Water Resources",
+          "description": "Understanding Pakistan's water management",
+          "learningObjectives": [
+            "Analyze the Indus Water Treaty",
+            "Evaluate major dam projects",
+            "Understand water conservation challenges"
+          ]
+        },
+        {
+          "name": "Forest Resources",
+          "description": "Understanding forest management and conservation",
+          "learningObjectives": [
+            "Analyze deforestation causes and impacts",
+            "Evaluate afforestation programs",
+            "Understand sustainable forest management"
+          ]
+        },
+        {
+          "name": "Mineral Resources",
+          "description": "Understanding Pakistan's mineral wealth",
+          "learningObjectives": [
+            "Identify major mineral deposits",
+            "Analyze extraction and processing methods",
+            "Understand economic importance of minerals"
+          ]
+        },
+        {
+          "name": "Fishing Industry",
+          "description": "Understanding Pakistan's fishing sector",
+          "learningObjectives": [
+            "Analyze coastal and inland fishing",
+            "Evaluate fishing industry challenges",
+            "Understand sustainable fishing practices"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Power and Energy",
+      "subtopics": [
+        {
+          "name": "Energy Sources",
+          "description": "Understanding Pakistan's energy mix",
+          "learningObjectives": [
+            "Compare renewable and non-renewable sources",
+            "Analyze hydroelectric power generation",
+            "Evaluate alternative energy potential"
+          ]
+        },
+        {
+          "name": "Energy Development",
+          "description": "Understanding energy infrastructure",
+          "learningObjectives": [
+            "Analyze solar and wind energy projects",
+            "Evaluate nuclear power programs",
+            "Understand energy distribution systems"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Agricultural Development",
+      "subtopics": [
+        {
+          "name": "Crop Production",
+          "description": "Understanding major agricultural products",
+          "learningObjectives": [
+            "Analyze production of cotton and rice",
+            "Evaluate wheat and sugarcane farming",
+            "Understand crop rotation practices"
+          ]
+        },
+        {
+          "name": "Agricultural Methods",
+          "description": "Understanding farming techniques",
+          "learningObjectives": [
+            "Analyze irrigation systems",
+            "Evaluate livestock management",
+            "Understand modern farming technologies"
+          ]
+        },
+        {
+          "name": "Agricultural Policy",
+          "description": "Understanding government agricultural initiatives",
+          "learningObjectives": [
+            "Analyze agricultural policies",
+            "Evaluate farming subsidies",
+            "Understand agricultural challenges"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Industrial Development",
+      "subtopics": [
+        {
+          "name": "Major Industries",
+          "description": "Understanding key industrial sectors",
+          "learningObjectives": [
+            "Analyze textile and cement industries",
+            "Evaluate steel and fertilizer production",
+            "Understand industrial growth patterns"
+          ]
+        },
+        {
+          "name": "Industrial Scale",
+          "description": "Understanding different scales of industry",
+          "learningObjectives": [
+            "Compare small and large-scale industries",
+            "Analyze industrial development policies",
+            "Understand industrial challenges"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Trade and Transport",
+      "subtopics": [
+        {
+          "name": "International Trade",
+          "description": "Understanding Pakistan's trade relations",
+          "learningObjectives": [
+            "Analyze major exports and imports",
+            "Evaluate trading partnerships",
+            "Understand trade policies"
+          ]
+        },
+        {
+          "name": "Transport Networks",
+          "description": "Understanding transportation infrastructure",
+          "learningObjectives": [
+            "Analyze road and rail networks",
+            "Evaluate air and sea transport",
+            "Understand transport development"
+          ]
+        },
+        {
+          "name": "Communications",
+          "description": "Understanding modern communication systems",
+          "learningObjectives": [
+            "Analyze digital infrastructure",
+            "Evaluate telecommunication networks",
+            "Understand communication technology impact"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Population and Employment",
+      "subtopics": [
+        {
+          "name": "Demographics",
+          "description": "Understanding population patterns",
+          "learningObjectives": [
+            "Analyze population growth trends",
+            "Evaluate urbanization impacts",
+            "Understand demographic challenges"
+          ]
+        },
+        {
+          "name": "Employment Issues",
+          "description": "Understanding labor market dynamics",
+          "learningObjectives": [
+            "Analyze unemployment causes",
+            "Evaluate migration patterns",
+            "Understand employment policies"
+          ]
+        }
+      ]
+    }
+  ]
+}

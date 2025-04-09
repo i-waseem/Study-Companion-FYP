@@ -1,0 +1,121 @@
+{
+  "gradeLevel": "O-Level",
+  "subject": "Computer Science",
+  "topics": [
+    {
+      "name": "Computer Systems",
+      "subtopics": [
+        {
+          "name": "Data Representation",
+          "description": "Understanding various number systems and data representation methods in computer systems",
+          "learningObjectives": [
+            "Convert between and perform operations in Binary, Denary, and Hexadecimal number systems",
+            "Understand and perform logical binary shifts",
+            "Use Two's Complement for representing negative numbers",
+            "Explain how text, sound, and images are represented in computers",
+            "Understand data storage requirements and compression techniques (Lossy & Lossless)"
+          ]
+        },
+        {
+          "name": "Data Transmission",
+          "description": "Understanding methods and protocols for data transmission in computer networks",
+          "learningObjectives": [
+            "Explain packet switching and the structure of data packets",
+            "Compare different transmission methods (Serial, Parallel, Simplex, Duplex)",
+            "Understand the Universal Serial Bus (USB) standard",
+            "Implement and explain error detection methods (Parity, Checksum, Echo Check)",
+            "Understand encryption methods (Symmetric & Asymmetric)"
+          ]
+        },
+        {
+          "name": "Hardware",
+          "description": "Understanding computer architecture and hardware components",
+          "learningObjectives": [
+            "Explain computer architecture including CPU and the Fetch-Decode-Execute Cycle",
+            "Identify and describe various input and output devices",
+            "Compare different data storage technologies (Magnetic, Optical, Solid-State)",
+            "Understand virtual memory and cloud storage concepts",
+            "Explain network hardware components and addressing (NIC, MAC Address, IP Address, Routers)"
+          ]
+        },
+        {
+          "name": "Software",
+          "description": "Understanding different types of software and their functions",
+          "learningObjectives": [
+            "Differentiate between System Software and Application Software",
+            "Explain Operating System functions and interrupt handling",
+            "Compare High-Level and Low-Level programming languages",
+            "Understand the role of Compilers, Interpreters & Assemblers",
+            "Describe features and benefits of Integrated Development Environments (IDEs)"
+          ]
+        },
+        {
+          "name": "Internet & Its Uses",
+          "description": "Understanding internet technologies and their applications",
+          "learningObjectives": [
+            "Differentiate between Internet and World Wide Web",
+            "Understand URLs and protocols (HTTP, HTTPS)",
+            "Explain web browsers and the use of cookies",
+            "Understand digital currency and blockchain technology",
+            "Identify and prevent cybersecurity threats"
+          ]
+        },
+        {
+          "name": "Automated & Emerging Technologies",
+          "description": "Understanding modern automated systems and emerging technologies",
+          "learningObjectives": [
+            "Explain automated systems components (Sensors, Microprocessors, Actuators)",
+            "Understand robotics characteristics and applications",
+            "Describe Artificial Intelligence applications including Expert Systems and Machine Learning"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Algorithms, Programming, and Logic",
+      "subtopics": [
+        {
+          "name": "Algorithm Design & Problem-Solving",
+          "description": "Understanding software development lifecycle and problem-solving techniques",
+          "learningObjectives": [
+            "Follow the Program Development Life Cycle (Analysis, Design, Coding, Testing)",
+            "Apply problem decomposition techniques",
+            "Implement standard algorithmic methods (Sorting, Searching, Counting)",
+            "Perform validation and verification of algorithms",
+            "Use trace tables and dry-run testing"
+          ]
+        },
+        {
+          "name": "Programming",
+          "description": "Understanding fundamental programming concepts and techniques",
+          "learningObjectives": [
+            "Work with variables, constants, and different data types",
+            "Use input/output operations and various operators (Arithmetic, Relational, Logical)",
+            "Implement control structures (Sequence, Selection, Iteration)",
+            "Create and use procedures and functions with and without parameters",
+            "Work with nested statements and library routines",
+            "Implement arrays (1D, 2D) and perform file handling operations"
+          ]
+        },
+        {
+          "name": "Databases",
+          "description": "Understanding basic database concepts and SQL queries",
+          "learningObjectives": [
+            "Design and work with single-table databases",
+            "Understand different data types and primary keys",
+            "Write SQL queries using SELECT, WHERE, ORDER BY, COUNT, SUM, AND, OR"
+          ]
+        },
+        {
+          "name": "Boolean Logic",
+          "description": "Understanding logic gates and digital circuit design",
+          "learningObjectives": [
+            "Understand and use basic logic gates (AND, OR, NOT, NAND, NOR, XOR)",
+            "Design logic circuits from problem statements",
+            "Create and use truth tables and boolean expressions"
+          ]
+        }
+      ]
+    }
+  ]
+}

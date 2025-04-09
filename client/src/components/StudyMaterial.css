@@ -1,0 +1,81 @@
+.study-material {
+  padding: 2rem;
+}
+
+.materials-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.subject-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.subject-card h3 {
+  color: var(--primary-brown);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--light-gray);
+}
+
+.topic-section {
+  margin-bottom: 1.5rem;
+}
+
+.topic-section h4 {
+  color: var(--dark-gray);
+  margin-bottom: 1rem;
+}
+
+.resources {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.resource-link {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem;
+  background-color: var(--light-gray);
+  border-radius: 4px;
+  text-decoration: none;
+  color: var(--primary-brown);
+  transition: background-color 0.3s;
+}
+
+.resource-link:hover {
+  background-color: var(--dark-gray);
+  color: white;
+}
+
+.resource-type {
+  background-color: var(--primary-brown);
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  margin-right: 0.8rem;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.pdf .resource-type {
+  background-color: #e74c3c;
+}
+
+.video .resource-type {
+  background-color: #3498db;
+}
+
+.code .resource-type {
+  background-color: #2ecc71;
+}
+
+.practice .resource-type {
+  background-color: #f39c12;
+}

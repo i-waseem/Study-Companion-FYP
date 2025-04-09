@@ -1,0 +1,327 @@
+.profile-settings {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.settings-tabs {
+  margin-top: 1rem;
+}
+
+.settings-tabs .ant-tabs-nav {
+  margin-bottom: 2rem;
+}
+
+.settings-tabs .ant-tabs-tab {
+  font-size: 1rem;
+  padding: 12px 24px;
+}
+
+.settings-tabs .ant-tabs-tab-active {
+  font-weight: 600;
+}
+
+.settings-tabs .ant-tabs-ink-bar {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+
+.settings-tabs .ant-tabs-tab:hover {
+  color: #2a5298;
+}
+
+.profile-settings h2 {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #2E8B57 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.settings-container {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #2c3e50;
+}
+
+.settings-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.settings-section h3 {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #2E8B57 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.setting-item {
+  margin-bottom: 1.5rem;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.setting-item:hover {
+  background-color: #f8fafc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.setting-item label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.setting-item select,
+.setting-item input[type="number"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-top: 0.25rem;
+  color: #2d3748;
+  background-color: white;
+}
+
+.setting-item select:focus,
+.setting-item input[type="number"]:focus {
+  outline: none;
+  border-color: #1a365d;
+  box-shadow: 0 0 0 1px #1a365d;
+}
+
+.setting-item input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.setting-item input[type="number"]::-webkit-outer-spin-button,
+.setting-item input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.toggle-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.frequency-select {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.frequency-select label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #666;
+}
+
+.frequency-select select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 1rem;
+}
+
+.save-button {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.save-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+
+.save-button:disabled {
+  background: #a0aec0;
+  transform: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.secondary-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: white;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  border: 2px solid;
+  border-image: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) 1;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.secondary-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.danger-zone {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ffcdd2;
+}
+
+.danger-zone h4 {
+  color: #d32f2f;
+  margin-bottom: 1rem;
+}
+
+.delete-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #ffebee;
+  color: #d32f2f;
+  border: 1px solid #d32f2f;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #ffcdd2;
+}
+
+.password-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.password-input:focus {
+  outline: none;
+  border-color: #1a365d;
+  box-shadow: 0 0 0 1px #1a365d;
+}
+
+.error-message {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  color: #c00;
+}
+
+.success-message {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #efe;
+  border: 1px solid #cfc;
+  border-radius: 4px;
+  color: #0c0;
+}
+
+/* Original profile settings styles */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.form-group input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='time'],
+select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  margin-top: 0.25rem;
+  color: #2d3748;
+  background-color: white;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #1a365d;
+  box-shadow: 0 0 0 1px #1a365d;
+}
+
+.subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.subject-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.subject-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.subject-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
