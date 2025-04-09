@@ -384,6 +384,13 @@
   color: transparent;
 }
 
+.quote-button {
+  width: 100%;
+  max-width: 150px;
+  margin-top: 1rem;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #2E8B57 100%) !important;
+}
+
 .action-card p {
   color: #666;
   margin: 0;
