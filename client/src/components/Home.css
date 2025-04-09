@@ -333,7 +333,7 @@
 
 /* Quick Links Card */
 .quick-links-card {
-  margin: 0;
+  margin-top: 1rem;
   border-radius: 0.75rem;
   box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.1);
 }
@@ -352,7 +352,8 @@
 
 /* Action Cards */
 .actions-section {
-  margin-bottom: 1rem;
+  margin-top: -0.6rem;
+  margin-bottom: 0.5rem;
 }
 
 .action-card {

@@ -6,6 +6,11 @@ const flashcardSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  subtopic: {
+    type: String,
+    required: true,
+    trim: true
+  },
   question: {
     type: String,
     required: true,

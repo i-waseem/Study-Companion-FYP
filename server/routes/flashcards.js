@@ -4,10 +4,10 @@ const auth = require('../middleware/auth');
 const Curriculum = require('../models/Curriculum');
 const Flashcard = require('../models/Flashcard');
 
-// Get flashcard sets for a subject
-router.get('/:gradeLevel/:subject', auth, async (req, res) => {
+// Get flashcards for a specific subject, topic, and subtopic
+router.get('/:gradeLevel/:subject/:topic/:subtopic', auth, async (req, res) => {
   try {
-    const { gradeLevel, subject } = req.params;
+    const { gradeLevel, subject, topic, subtopic } = req.params;
     
     // Convert grade level and subject to proper format
     const formattedGradeLevel = gradeLevel.toLowerCase() === 'o-level' ? 'O-Level' : gradeLevel;
@@ -27,10 +27,32 @@ router.get('/:gradeLevel/:subject', auth, async (req, res) => {
 
     console.log(`Generating flashcards for ${formattedGradeLevel} ${formattedSubject}`);
 
+    // Format topic and subtopic
+    const formattedTopic = topic.split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+
+    const formattedSubtopic = subtopic.split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+
+    console.log('Formatted topic:', formattedTopic);
+    console.log('Formatted subtopic:', formattedSubtopic);
+
+    console.log('Searching for flashcards with:', {
+      category: formattedSubject,
+      topic: formattedTopic,
+      subtopic: formattedSubtopic
+    });
+
     // Find flashcards in the database
     const flashcards = await Flashcard.find({
-      category: formattedSubject
+      category: formattedSubject,
+      topic: formattedTopic,
+      subtopic: formattedSubtopic
     }).lean();
+    
+    console.log('Found flashcards:', flashcards);
 
     if (!flashcards || flashcards.length === 0) {
       console.log('No flashcards found, generating from curriculum');
@@ -75,7 +97,33 @@ router.get('/:gradeLevel/:subject', auth, async (req, res) => {
         userId: req.user._id
       }))));
 
-      res.json(flashcardSets);
+      // Save flashcards to database
+      const newFlashcards = flashcardSets
+        .flatMap(set => set.cards)
+        .filter(card => card.subtopic === formattedSubtopic)
+        .map(card => ({
+          topic: formattedTopic,
+          subtopic: formattedSubtopic,
+          question: card.front,
+          answer: card.back,
+          difficulty: 'Medium',
+          category: formattedSubject,
+          userId: req.user._id
+        }));
+
+      if (newFlashcards.length > 0) {
+        await Flashcard.insertMany(newFlashcards);
+        console.log(`Saved ${newFlashcards.length} new flashcards`);
+
+        res.json({
+          flashcards: newFlashcards.map(card => ({
+            question: card.question,
+            answer: card.answer
+          }))
+        });
+      } else {
+        throw new Error('No flashcards found for this subtopic');
+      }
     } else {
       // Transform flashcards into sets
       const flashcardSets = {};
@@ -98,7 +146,13 @@ router.get('/:gradeLevel/:subject', auth, async (req, res) => {
         });
       });
 
-      res.json(Object.values(flashcardSets));
+      // Format the flashcards for the frontend
+      res.json({
+        flashcards: flashcards.map(card => ({
+          question: card.question,
+          answer: card.answer
+        }))
+      });
     }
   } catch (error) {
     console.error('Error generating flashcards:', error);

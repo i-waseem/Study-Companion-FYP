@@ -71,7 +71,7 @@ function AppRoutes() {
               <FlashcardSelection />
             </ProtectedRoute>
           } />
-          <Route path="/flashcards/:subject/:topic/:subtopic" element={
+          <Route path="/flashcards/study/:subject/:topic/:subtopic" element={
             <ProtectedRoute>
               <Flashcards />
             </ProtectedRoute>
