@@ -30,16 +30,32 @@ router.get('/', async (req, res) => {
     const model = genAI.getGenerativeModel({ model: 'models/gemini-2.0-flash' });
     console.log('Model selected: gemini-2.0-flash');
 
+    const categories = [
+      'motivation and persistence in learning',
+      'curiosity and discovery',
+      'overcoming educational challenges',
+      'the joy of learning',
+      'knowledge and wisdom',
+      'personal growth through education',
+      'the power of continuous learning',
+      'academic excellence',
+      'learning from failures'
+    ];
+
+    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+
     const prompt = {
       contents: [{
         role: 'user',
         parts: [{
-          text: `Generate an inspiring quote about learning or education. 
+          text: `Generate a unique and inspiring quote about ${randomCategory}. The quote should be profound and not cliché.
+                Ensure it is different from common, overused quotes.
                 Return it in this exact JSON format without any markdown formatting or code blocks:
                 {
                   "quote": "the quote text here",
                   "source": "the source/author here"
-                }`
+                }
+                Note: The source can be a famous educator, philosopher, scientist, or historical figure.`
         }]
       }]
     };
