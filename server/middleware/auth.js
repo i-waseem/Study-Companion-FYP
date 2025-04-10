@@ -10,6 +10,8 @@ module.exports = (req, res, next) => {
     
     // Get token from cookie
     const token = req.cookies.token;
+    console.log('Cookies received:', req.cookies);
+    console.log('Token found:', token);
     
     if (!token) {
       console.log('No token found in cookies');

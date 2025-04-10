@@ -1,35 +1,16 @@
 import api from '../api/config';
 
-export const getGeminiResponse = async (prompt, type = 'quote') => {
+export const getGeminiResponse = async (prompt) => {
   try {
-    console.log('Sending prompt to server:', { prompt, type });
-    let response;
-
-    switch (type) {
-      case 'quote':
-        // For quotes, use GET request to quotes endpoint
-        response = await api.get('/quotes');
-        console.log('Quote response:', response.data);
-        return {
-          quote: response.data.quote,
-          source: response.data.source,
-          isGemini: response.data.isGemini,
-          error: response.data.error,
-          message: response.data.message
-        };
-
-      case 'career':
-        // For career guidance, use POST request with prompt
-        response = await api.post('/career/generate', { prompt });
-        console.log('Career guidance response:', response.data);
-        if (!response.data || !response.data.recommendations) {
-          throw new Error('Invalid response format from server');
-        }
-        return response.data.recommendations;
-
-      default:
-        throw new Error(`Unsupported request type: ${type}`);
+    console.log('Sending prompt to server:', prompt);
+    const response = await api.post('/career/generate', { prompt });
+    console.log('AI response:', response.data);
+    
+    if (!response.data || !response.data.recommendations) {
+      throw new Error('Invalid response format from server');
     }
+
+    return response.data.recommendations;
   } catch (error) {
     console.error('Error in getGeminiResponse:', {
       error,

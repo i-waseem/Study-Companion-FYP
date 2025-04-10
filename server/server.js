@@ -32,8 +32,12 @@ app.use(cors({
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
-  exposedHeaders: ['Set-Cookie']
+  exposedHeaders: ['Set-Cookie'],
+  preflightContinue: true
 }));
+
+// Enable pre-flight requests for all routes
+app.options('*', cors());
 
 // Middleware
 app.use(express.json());
@@ -93,7 +97,8 @@ const userRoutes = require('./routes/user');
 const notificationsRoutes = require('./routes/notifications');
 const achievementsRoutes = require('./routes/achievements');
 const progressRoutes = require('./routes/progress');
-const flashcardRoutes = require('./routes/flashcards');
+const flashcardSetsRoutes = require('./routes/flashcardSets');
+const flashcardsNewRoutes = require('./routes/flashcardsNew');
 const careerRoutes = require('./routes/career');
 const feedbackRoutes = require('./routes/feedback');
 
@@ -106,7 +111,8 @@ app.use('/api/user', userRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/achievements', achievementsRoutes);
 app.use('/api/progress', progressRoutes);
-app.use('/api/flashcards', flashcardRoutes);
+app.use('/api/flashcards', flashcardSetsRoutes);
+app.use('/api/flashcards-new', flashcardsNewRoutes);
 app.use('/api/career', careerRoutes);
 app.use('/api/feedback', feedbackRoutes);
 

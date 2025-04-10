@@ -10,69 +10,99 @@ import './Home.css';
 
 const { Content } = Layout;
 
-// Navigation menu items configuration
-const MENU_ITEMS = [
-  { path: '/study-session', title: 'Study Session', icon: BookOutlined, description: 'Start studying' },
-  { path: '/quiz', title: 'Take a Quiz', icon: RocketOutlined, description: 'Test your knowledge' },
-  { path: '/notes', title: 'Notes', icon: FileTextOutlined, description: 'View your notes' },
-  { path: '/flashcards', title: 'Flashcards', icon: BulbOutlined, description: 'Review with flashcards' },
-  { path: '/career-guidance', title: 'Career Guidance', icon: TeamOutlined, description: 'Get career advice' },
-  { path: '/dashboard', title: 'Dashboard', icon: TrophyOutlined, description: 'View your progress' }
-];
-
 function Home() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  
-  // Quote state management
-  const [quoteState, setQuoteState] = useState({
-    quote: '',
-    source: '',
-    error: false,
-    errorMessage: '',
-    loading: true,
-    isGemini: false
-  });
+  const [quote, setQuote] = useState('');
+  const [source, setSource] = useState('');
+  const [quoteError, setQuoteError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [quoteLoading, setQuoteLoading] = useState(true);
+  const [isGemini, setIsGemini] = useState(false);
 
-  // Handle navigation
-  const handleNavigation = (path) => () => navigate(path);
+  useEffect(() => {
+    let mounted = true;
 
-  // Fetch quote from Gemini API
-  const fetchQuote = async (mounted = true) => {
+    const getQuote = async () => {
+      try {
+        setQuoteLoading(true);
+        setQuoteError(false);
+        const response = await getGeminiResponse();
+        if (mounted) {
+          setQuote(response.quote);
+          setSource(response.source);
+          setIsGemini(response.isGemini);
+          
+          if (response.error) {
+            setQuoteError(true);
+            setErrorMessage(response.message || 'Unknown error');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching quote:', error);
+        if (mounted) {
+          setQuoteError(true);
+          setErrorMessage(error.message || 'Failed to fetch quote');
+        }
+      } finally {
+        if (mounted) {
+          setQuoteLoading(false);
+        }
+      }
+    };
+
+    getQuote();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const fetchNewQuote = async () => {
     try {
-      setQuoteState(prev => ({ ...prev, loading: true, error: false }));
-      const response = await getGeminiResponse(null, 'quote');
+      setQuoteLoading(true);
+      setQuoteError(false);
+      const response = await getGeminiResponse();
+      setQuote(response.quote);
+      setSource(response.source);
+      setIsGemini(response.isGemini);
       
-      if (mounted) {
-        setQuoteState(prev => ({
-          ...prev,
-          quote: response.quote,
-          source: response.source,
-          isGemini: response.isGemini,
-          error: response.error,
-          errorMessage: response.error ? (response.message || 'Unknown error') : '',
-          loading: false
-        }));
+      if (response.error) {
+        setQuoteError(true);
+        setErrorMessage(response.message || 'Unknown error');
       }
     } catch (error) {
       console.error('Error fetching quote:', error);
-      if (mounted) {
-        setQuoteState(prev => ({
-          ...prev,
-          error: true,
-          errorMessage: error.message || 'Failed to fetch quote',
-          loading: false
-        }));
-      }
+      setQuoteError(true);
+      setErrorMessage(error.message || 'Failed to fetch quote');
+    } finally {
+      setQuoteLoading(false);
     }
   };
 
-  // Initial quote fetch
-  useEffect(() => {
-    let mounted = true;
-    fetchQuote(mounted);
-    return () => { mounted = false; };
-  }, []);
+  const handleStartStudy = () => {
+    navigate('/study-session');
+  };
+
+  const handleStartQuiz = () => {
+    navigate('/quiz');
+  };
+
+  const handleViewNotes = () => {
+    navigate('/notes');
+  };
+
+  const handleViewFlashcards = () => {
+    navigate('/flashcards');
+  };
+
+  const handleCareerGuidance = () => {
+    navigate('/career-guidance');
+  };
+
+  const handleViewDashboard = () => {
+    navigate('/dashboard');
+  };
 
   return (
     <Layout className="home-layout">
@@ -93,26 +123,28 @@ function Home() {
           <Card className="quote-card">
             <div className="motivation-section">
               <h3>Today's Motivation</h3>
-              {quoteState.loading ? (
+              {quoteLoading ? (
                 <p className="quote-text">Loading your daily motivation...</p>
-              ) : quoteState.error ? (
+              ) : quoteError ? (
                 <div>
                   <Alert
                     message="Gemini API Error"
-                    description={quoteState.quote || quoteState.errorMessage || "Unable to connect to Gemini API"}
+                    description={quote || errorMessage || "Unable to connect to Gemini API"}
                     type="error"
                     showIcon
                   />
-                  <Button onClick={() => fetchQuote(true)} type="primary" style={{ marginTop: '10px' }}>Try Again</Button>
+                  <Button onClick={fetchNewQuote} type="primary" style={{ marginTop: '10px' }}>Try Again</Button>
                 </div>
               ) : (
                 <blockquote>
-                  <p className="quote-text">{quoteState.quote}</p>
-                  {quoteState.source && <p className="quote-source">- {quoteState.source}</p>}
+                  "{quote}"
+                  <footer>
+                    — {source || 'Unknown'}
+                  </footer>
                 </blockquote>
               )}
-              {!quoteState.loading && !quoteState.error && (
-                <Button className='quote-button' onClick={fetchQuote} type="primary">Get New Quote</Button>
+              {!quoteLoading && !quoteError && (
+                <Button onClick={fetchNewQuote} type="primary">Get New Quote</Button>
               )}
             </div>
           </Card>
@@ -122,30 +154,54 @@ function Home() {
           <Row gutter={[16, 16]}>
             <Col xs={6}>
               <Card className="action-card whats-new-card">
+                <NotificationOutlined className="card-icon" />
                 <h3>What's New</h3>
                 <Timeline
                   className="mini-timeline"
                   items={[
-                    { children: 'New AI-powered quiz generation' },
-                    { children: 'Improved flashcard study mode' }
+                    {
+                      children: 'New AI-powered quiz generation'
+                    },
+                    {
+                      children: 'Improved flashcard study mode'
+                    }
                   ]}
                 />
               </Card>
             </Col>
-            {/* Dynamic action cards */}
-            {MENU_ITEMS.slice(1, 4).map((item) => (
-              <Col xs={6} key={item.path}>
-                <Card 
-                  className={`action-card ${item.path.substring(1)}-card`}
-                  onClick={handleNavigation(item.path)}
-                  hoverable
-                >
-                  <item.icon className="card-icon" />
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
-                </Card>
-              </Col>
-            ))}
+            <Col xs={6}>
+              <Card 
+                className="action-card quiz-card"
+                onClick={handleStartQuiz}
+                hoverable
+              >
+                <RocketOutlined className="card-icon" />
+                <h3>Take a Quiz</h3>
+                <p>Test your knowledge</p>
+              </Card>
+            </Col>
+            <Col xs={6}>
+              <Card 
+                className="action-card flashcard-card"
+                onClick={handleViewFlashcards}
+                hoverable
+              >
+                <BulbOutlined className="card-icon" />
+                <h3>Flashcards</h3>
+                <p>Review with flashcards</p>
+              </Card>
+            </Col>
+            <Col xs={6}>
+              <Card 
+                className="action-card dashboard-card"
+                onClick={handleViewDashboard}
+                hoverable
+              >
+                <TrophyOutlined className="card-icon" />
+                <h3>Dashboard</h3>
+                <p>View your progress</p>
+              </Card>
+            </Col>
           </Row>
         </div>
 
@@ -208,16 +264,12 @@ function Home() {
 
               <Card title="Quick Links" className="quick-links-card">
                 <div className="quick-links-wrapper">
-                  {MENU_ITEMS.filter(item => ['Notes', 'Career Guidance'].includes(item.title)).map((item) => (
-                    <Button 
-                      key={item.path}
-                      type="link" 
-                      icon={<item.icon />} 
-                      onClick={handleNavigation(item.path)}
-                    >
-                      {item.title}
-                    </Button>
-                  ))}
+                  <Button type="link" icon={<FileTextOutlined />} onClick={handleViewNotes}>
+                    Notes
+                  </Button>
+                  <Button type="link" icon={<TeamOutlined />} onClick={handleCareerGuidance}>
+                    Career Guidance
+                  </Button>
                 </div>
               </Card>
             </Col>

@@ -45,10 +45,10 @@ const api = {
   updateProgress: (data) => axiosInstance.post('/progress', data),
   
   // Flashcard endpoints
-  getFlashcards: (gradeLevel, subject, topic, subtopic) => 
-    axiosInstance.get(`/flashcards/${gradeLevel}/${subject}/${topic}/${subtopic}`),
-  updateFlashcardProgress: (setId, cardId, data) => 
-    axiosInstance.post(`/flashcards/progress/card/${setId}/${cardId}`, data),
+  getFlashcards: (subject) => axiosInstance.get(`/flashcards/${subject}`),
+  getFlashcardsByTopic: (subject, topic) => axiosInstance.get(`/flashcards/${subject}/${topic}`),
+  updateFlashcardProgress: (setId, cardId, data) => axiosInstance.put(`/flashcards/${setId}/${cardId}`, data),
+  getDueCards: () => axiosInstance.get('/flashcards/due'),
   
   // Generic request methods
   get: (url) => axiosInstance.get(url),

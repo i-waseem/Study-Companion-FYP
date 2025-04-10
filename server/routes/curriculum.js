@@ -26,12 +26,29 @@ router.get('/subjects', async (req, res) => {
   try {
     console.log('=== Fetching Subjects ===');
     
-    const curricula = await Curriculum.find({}).select('subject').lean();
+    const curricula = await Curriculum.find({}).select('subject gradeLevel').lean();
     console.log('Raw curricula from DB:', curricula);
     
-    // Just return the subject names
-    const subjects = curricula.map(c => c.subject);
-    console.log('Subjects:', subjects);
+    const subjects = curricula.map(c => {
+      let urlFriendly = c.subject.toLowerCase();
+      
+      // Special case for Pakistan Studies
+      if (c.subject.startsWith('Pakistan Studies')) {
+        const type = c.subject.split('- ')[1];
+        urlFriendly = `pakistan-studies-${type.toLowerCase()}`;
+      } else {
+        urlFriendly = urlFriendly.replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      }
+      
+      console.log(`Converting ${c.subject} to URL-friendly: ${urlFriendly}`);
+      return {
+        subject: c.subject,
+        urlFriendlySubject: urlFriendly,
+        gradeLevel: c.gradeLevel
+      };
+    });
+    
+    console.log('Processed subjects:', subjects);
     res.json(subjects);
   } catch (error) {
     console.error('Error fetching subjects:', error);
@@ -47,10 +64,7 @@ router.get('/o-level/:subject', async (req, res) => {
     console.log('Requested subject:', subject);
     
     // Convert URL-friendly subject back to proper format
-    const displaySubject = subject
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+    const displaySubject = fromUrlFriendly(subject);
     console.log('Display subject:', displaySubject);
     
     const curriculum = await Curriculum.findOne({

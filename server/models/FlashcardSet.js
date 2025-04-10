@@ -1,5 +1,36 @@
 const mongoose = require('mongoose');
 
+const cardSchema = new mongoose.Schema({
+  question: {
+    type: String,
+    required: true
+  },
+  answer: {
+    type: String,
+    required: true
+  },
+  type: {
+    type: String,
+    enum: ['definition', 'concept', 'fact', 'example', 'application'],
+    default: 'concept'
+  },
+  // Progress tracking fields
+  lastReviewed: {
+    type: Date,
+    default: null
+  },
+  timesReviewed: {
+    type: Number,
+    default: 0
+  },
+  confidenceLevel: {
+    type: Number,
+    min: 0,
+    max: 100,
+    default: 0
+  }
+});
+
 const flashcardSetSchema = new mongoose.Schema({
   gradeLevel: {
     type: String,
@@ -19,21 +50,7 @@ const flashcardSetSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  cards: [{
-    question: {
-      type: String,
-      required: true
-    },
-    answer: {
-      type: String,
-      required: true
-    },
-    type: {
-      type: String,
-      enum: ['definition', 'concept', 'fact', 'example', 'application'],
-      default: 'concept'
-    }
-  }],
+  cards: [cardSchema],
   // Reference to the curriculum
   curriculumId: {
     type: mongoose.Schema.Types.ObjectId,

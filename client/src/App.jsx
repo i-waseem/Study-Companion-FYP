@@ -8,8 +8,7 @@ import Quiz from './components/Quiz';
 import SubjectSelection from './components/SubjectSelection';
 import Home from './components/Home';
 import Subjects from './components/Subjects';
-import Flashcards from './components/Flashcards';
-import FlashcardSelection from './components/FlashcardSelection';
+import FlashcardNew from './components/FlashcardNew';
 import Progress from './components/Progress';
 import Notes from './components/Notes';
 import CareerGuidance from './components/CareerGuidance';
@@ -68,12 +67,7 @@ function AppRoutes() {
           } />
           <Route path="/flashcards" element={
             <ProtectedRoute>
-              <FlashcardSelection />
-            </ProtectedRoute>
-          } />
-          <Route path="/flashcards/study/:subject/:topic/:subtopic" element={
-            <ProtectedRoute>
-              <Flashcards />
+              <FlashcardNew />
             </ProtectedRoute>
           } />
           <Route path="/progress" element={

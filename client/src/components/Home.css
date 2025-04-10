@@ -333,7 +333,7 @@
 
 /* Quick Links Card */
 .quick-links-card {
-  margin-top: 1rem;
+  margin: 0;
   border-radius: 0.75rem;
   box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.1);
 }
@@ -352,8 +352,7 @@
 
 /* Action Cards */
 .actions-section {
-  margin-top: -0.6rem;
-  margin-bottom: 0.5rem;
+  margin-top: 1.5rem;
 }
 
 .action-card {
@@ -383,13 +382,6 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-}
-
-.quote-button {
-  width: 100%;
-  max-width: 150px;
-  margin-top: 1rem;
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #2E8B57 100%) !important;
 }
 
 .action-card p {

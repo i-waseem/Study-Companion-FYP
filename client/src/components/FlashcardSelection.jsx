@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Card, Select, Button, Typography, Alert, Spin } from 'antd';
 import api from '../api/config';
-import AuthService from '../services/auth.service';
 import './FlashcardSelection.css';
+
+
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -18,35 +19,23 @@ function FlashcardSelection() {
   const [selectedSubtopic, setSelectedSubtopic] = useState('');
   const [topics, setTopics] = useState([]);
   const [subtopics, setSubtopics] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(AuthService.isLoggedIn());
 
-  // Fetch available subjects
+  // Fetch available subjects from flashcard sets
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
         setLoading(true);
-        const response = await api.get('/curriculum/subjects');
-        console.log('Subjects response:', response.data);
-        
+        const response = await api.get('/flashcards/subjects');
         if (response.data && Array.isArray(response.data)) {
-          // Extract subject names and format them
-          const subjectsArray = response.data.map(item => {
-            // If item is an object with subject property, use that
-            if (item && typeof item === 'object' && item.subject) {
-              return item.subject;
-            }
-            // Otherwise use the item directly if it's a string
-            return String(item);
-          });
-          
-          setSubjects(subjectsArray);
-          console.log('Set subjects:', subjectsArray);
-        } else {
-          throw new Error('Invalid subjects data format');
+          setSubjects(response.data);
         }
       } catch (err) {
         console.error('Failed to fetch subjects:', err);
-        setError('Failed to load subjects. Please refresh the page.');
+        if (err.response?.status === 401) {
+          setError('Please log in to access flashcards');
+        } else {
+          setError('Failed to load subjects. Please refresh the page.');  
+        }
       } finally {
         setLoading(false);
       }
@@ -60,18 +49,9 @@ function FlashcardSelection() {
       if (!selectedSubject) return;
       try {
         setLoading(true);
-        console.log('Fetching topics for subject:', selectedSubject);
-        const response = await api.get(`/curriculum/o-level/${selectedSubject}`);
-        console.log('Topics response:', response.data);
-        
-        if (response.data && response.data.topics) {
-          // Ensure we have the correct structure
-          const topicsArray = response.data.topics.map(topic => ({
-            name: topic.name,
-            subtopics: topic.subtopics || []
-          }));
-          console.log('Setting topics:', topicsArray);
-          setTopics(topicsArray);
+        const response = await api.get(`/flashcards/topics/${selectedSubject}`);
+        if (response.data && Array.isArray(response.data)) {
+          setTopics(response.data);
           setSelectedTopic('');
           setSelectedSubtopic('');
         }
@@ -85,27 +65,29 @@ function FlashcardSelection() {
     fetchTopics();
   }, [selectedSubject]);
 
-  // Update subtopics when topic changes
+  // Fetch subtopics when topic changes
   useEffect(() => {
-    if (!selectedTopic) {
-      setSubtopics([]);
-      return;
-    }
-    const topic = topics.find(t => {
-      const topicName = t.name.toLowerCase().replace(/\s+/g, '-');
-      return topicName === selectedTopic;
-    });
-    
-    if (topic) {
-      console.log('Found topic:', topic);
-      console.log('Setting subtopics:', topic.subtopics);
-      setSubtopics(topic.subtopics || []);
-      setSelectedSubtopic('');
-    } else {
-      console.error('Topic not found:', selectedTopic);
-      setSubtopics([]);
-    }
-  }, [selectedTopic, topics]);
+    const fetchSubtopics = async () => {
+      if (!selectedSubject || !selectedTopic) {
+        setSubtopics([]);
+        return;
+      }
+      try {
+        setLoading(true);
+        const response = await api.get(`/flashcards/subtopics/${selectedSubject}/${selectedTopic}`);
+        if (response.data && Array.isArray(response.data)) {
+          setSubtopics(response.data);
+          setSelectedSubtopic('');
+        }
+      } catch (err) {
+        console.error('Failed to fetch subtopics:', err);
+        setError('Failed to load subtopics. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSubtopics();
+  }, [selectedSubject, selectedTopic]);
 
   const handleSubjectChange = (subject) => {
     setSelectedSubject(subject);
@@ -124,20 +106,13 @@ function FlashcardSelection() {
       setError('Please select all options');
       return;
     }
-
-    console.log('Navigating to:', {
-      subject: selectedSubject,
-      topic: selectedTopic,
-      subtopic: selectedSubtopic
-    });
-
     navigate(`/flashcards/study/${selectedSubject}/${selectedTopic}/${selectedSubtopic}`);
   };
 
   if (loading && subjects.length === 0) {
     return (
-      <div className="loading-container">
-        <div className="loading-content">
+      <div className="flashcard-selection-container">
+        <div className="flashcard-loading">
           <Spin size="large" />
           <p>Loading subjects...</p>
         </div>
@@ -149,21 +124,6 @@ function FlashcardSelection() {
     <div className="flashcard-selection-container">
       <div className="flashcard-setup-container">
         <Title level={2}>Study with Flashcards</Title>
-
-        {!isLoggedIn && (
-          <Alert
-            message="Please Log In"
-            description="You need to log in to use flashcards."
-            type="warning"
-            showIcon
-            action={
-              <Button type="primary" onClick={() => navigate('/login')}>
-                Log In
-              </Button>
-            }
-            style={{ marginBottom: 16 }}
-          />
-        )}
 
         {error && (
           <Alert
@@ -205,27 +165,11 @@ function FlashcardSelection() {
               onChange={handleSubjectChange}
               loading={loading}
             >
-              {subjects.map(subject => {
-                try {
-                  const formattedValue = String(subject).toLowerCase().replace(/\s+/g, '-');
-                  const displayText = String(subject)
-                    .split(/[-\s]+/)
-                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                    .join(' ');
-                  
-                  return (
-                    <Option 
-                      key={formattedValue} 
-                      value={formattedValue}
-                    >
-                      {displayText}
-                    </Option>
-                  );
-                } catch (err) {
-                  console.error('Error formatting subject:', subject, err);
-                  return null;
-                }
-              }).filter(Boolean)}
+              {subjects.map(subject => (
+                <Option key={subject} value={subject}>
+                  {subject}
+                </Option>
+              ))}
             </Select>
           </div>
 
@@ -237,27 +181,11 @@ function FlashcardSelection() {
                 value={selectedTopic}
                 onChange={handleTopicChange}
               >
-                {topics.map(topic => {
-                  try {
-                    const formattedValue = String(topic.name).toLowerCase().replace(/\s+/g, '-');
-                    const displayText = String(topic.name)
-                      .split(/[-\s]+/)
-                      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                      .join(' ');
-
-                    return (
-                      <Option 
-                        key={formattedValue}
-                        value={formattedValue}
-                      >
-                        {displayText}
-                      </Option>
-                    );
-                  } catch (err) {
-                    console.error('Error formatting topic:', topic, err);
-                    return null;
-                  }
-                }).filter(Boolean)}
+                {topics.map(topic => (
+                  <Option key={topic} value={topic}>
+                    {topic}
+                  </Option>
+                ))}
               </Select>
             </div>
           )}
@@ -270,27 +198,11 @@ function FlashcardSelection() {
                 value={selectedSubtopic}
                 onChange={handleSubtopicChange}
               >
-                {subtopics.map(subtopic => {
-                  try {
-                    const formattedValue = String(subtopic.name).toLowerCase().replace(/\s+/g, '-');
-                    const displayText = String(subtopic.name)
-                      .split(/[-\s]+/)
-                      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                      .join(' ');
-
-                    return (
-                      <Option 
-                        key={formattedValue}
-                        value={formattedValue}
-                      >
-                        {displayText}
-                      </Option>
-                    );
-                  } catch (err) {
-                    console.error('Error formatting subtopic:', subtopic, err);
-                    return null;
-                  }
-                }).filter(Boolean)}
+                {subtopics.map(subtopic => (
+                  <Option key={subtopic} value={subtopic}>
+                    {subtopic}
+                  </Option>
+                ))}
               </Select>
             </div>
           )}

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
-import './Home.css';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -81,14 +80,13 @@ function Dashboard({ user }) {
   };
 
   return (
-    <div className="home-layout home-content">
-      <div className="welcome-section">
+    <div className="home-content home-layout">
+      <div className="dashboard-header">
         <h1>Dashboard</h1>
         <div className="streak-counter">
           <span className="streak-number">5</span>
           <span className="streak-label">Day Streak 🔥</span>
         </div>
-    
       </div>
 
       <div className="dashboard-grid">
