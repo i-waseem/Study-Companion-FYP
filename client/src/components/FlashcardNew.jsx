@@ -1,10 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Select, Typography, Spin, Alert } from 'antd';
+import { Card, Typography, Button, Spin, Space } from 'antd';
+import { BookOutlined, CodeOutlined, LineChartOutlined } from '@ant-design/icons';
 import api from '../api/config';
 import './FlashcardNew.css';
 
-const { Title } = Typography;
-const { Option } = Select;
+const { Title, Text } = Typography;
+
+const iconMap = {
+  'Computer Science': <CodeOutlined />,
+  'Pakistan Studies - History': <BookOutlined />,
+  'Pakistan Studies - Geography': <BookOutlined />,
+  'Economics': <LineChartOutlined />
+};
+
+const colorMap = {
+  'Computer Science': '#1890ff',
+  'Pakistan Studies - History': '#52c41a',
+  'Pakistan Studies - Geography': '#52c41a',
+  'Economics': '#722ed1'
+};
 
 function FlashcardNew() {
   const [loading, setLoading] = useState(false);
@@ -104,79 +118,62 @@ function FlashcardNew() {
     );
   }
 
-  if (currentStep === 'selection') {
-    return (
-      <div className="flashcard-new-container">
-        <Title level={2}>Study with Flashcards</Title>
-        <Card className="subject-selection">
-          <Select
-            placeholder="Select a subject"
-            style={{ width: '100%' }}
-            onChange={handleSubjectSelect}
-            loading={loading}
-          >
-            {subjects.map(subject => (
-              <Option key={subject} value={subject}>
-                {subject}
-              </Option>
-            ))}
-          </Select>
-        </Card>
-      </div>
-    );
-  }
-
-  if (currentStep === 'study' && flashcards.length > 0) {
-    const currentCard = flashcards[currentCardIndex];
-    return (
-      <div className="flashcard-new-container">
-        <div className="study-header">
-          <Button onClick={handleBackToSelection}>← Back to Subjects</Button>
-          <span className="card-count">
-            Card {currentCardIndex + 1} of {flashcards.length}
-          </span>
-        </div>
-
-        <Card
-          className={`flashcard ${isFlipped ? 'flipped' : ''}`}
-          onClick={handleFlip}
-        >
-          <div className="card-content">
-            <div className="card-front">
-              <p>{currentCard.question}</p>
-            </div>
-            <div className="card-back">
-              <p>{currentCard.answer}</p>
-            </div>
-          </div>
-        </Card>
-
-        <div className="navigation-buttons">
-          <Button onClick={handlePrevious} disabled={currentCardIndex === 0}>
-            Previous
-          </Button>
-          <Button onClick={handleFlip}>Flip</Button>
-          <Button
-            onClick={handleNext}
-            disabled={currentCardIndex === flashcards.length - 1}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flashcard-new-container">
-      <Alert
-        message="No flashcards available"
-        description="Please select a different subject."
-        type="info"
-        showIcon
-      />
+      <Title level={2}>Study with Flashcards</Title>
+      <Text className="subtitle">Select a subject to begin studying with flashcards.</Text>
+
+      {!selectedSubject ? (
+        <div className="subject-buttons">
+          {subjects.map((subject) => (
+            <Button
+              key={subject}
+              className="subject-button"
+              onClick={() => handleSubjectSelect(subject)}
+            >
+              {subject}
+            </Button>
+          ))}
+        </div>
+      ) : (
+        <>
+          <Button className="back-button" onClick={() => setSelectedSubject(null)}>
+            ← Back to Subjects
+          </Button>
+          
+          <div className="flashcard" onClick={handleFlip}>
+            <div className={`card-content ${isFlipped ? 'flipped' : ''}`}>
+              <div className="card-front">
+                <p>{flashcards[currentCardIndex]?.question}</p>
+              </div>
+              <div className="card-back">
+                <p>{flashcards[currentCardIndex]?.answer}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="card-progress">
+            Card {currentCardIndex + 1} of {flashcards.length}
+          </div>
+
+          <div className="navigation-buttons">
+            <Button onClick={handlePrevious} disabled={currentCardIndex === 0}>
+              Previous
+            </Button>
+            <Button onClick={handleFlip}>Flip</Button>
+            <Button
+              onClick={handleNext}
+              disabled={currentCardIndex === flashcards.length - 1}
+            >
+              Next
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
+
+
 }
 
 export default FlashcardNew;
