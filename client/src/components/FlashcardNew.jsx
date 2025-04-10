@@ -28,6 +28,8 @@ function FlashcardNew() {
   // Selection state
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(null);
+  const [topics, setTopics] = useState([]);
+  const [selectedTopic, setSelectedTopic] = useState(null);
   const [flashcards, setFlashcards] = useState([]);
   
   // Study state
@@ -44,6 +46,7 @@ function FlashcardNew() {
           setSubjects(response.data);
         }
       } catch (err) {
+        console.error('Error fetching subjects:', err);
         setError('Failed to load subjects. Please try again.');
       } finally {
         setLoading(false);
@@ -57,17 +60,52 @@ function FlashcardNew() {
     try {
       setLoading(true);
       setSelectedSubject(subject);
+      console.log('Fetching flashcards for subject:', subject);
       const response = await api.get(`/flashcards-new/${subject}`);
+      console.log('Response:', response.data);
+      
       if (response.data && Array.isArray(response.data.cards)) {
-        setFlashcards(response.data.cards);
-        setCurrentStep('study');
-        setCurrentCardIndex(0);
-        setIsFlipped(false);
+        // Group flashcards by topic and subtopic
+        const topicGroups = {};
+        response.data.cards.forEach(card => {
+          if (!topicGroups[card.topic]) {
+            topicGroups[card.topic] = {
+              topic: card.topic,
+              subtopics: {}
+            };
+          }
+          if (!topicGroups[card.topic].subtopics[card.subtopic]) {
+            topicGroups[card.topic].subtopics[card.subtopic] = [];
+          }
+          topicGroups[card.topic].subtopics[card.subtopic].push({
+            ...card,
+            question: card.question,
+            answer: card.answer
+          });
+        });
+        
+        const topics = Object.values(topicGroups);
+        console.log('Organized topics:', topics);
+        setTopics(topics);
+      } else {
+        console.error('Invalid response format:', response.data);
+        setError('Invalid data format received from server');
       }
     } catch (err) {
-      setError('Failed to load flashcards. Please try again.');
+      console.error('Error fetching topics:', err);
+      setError('Failed to load topics. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleTopicSelect = (topic, subtopic) => {
+    setSelectedTopic({ topic, subtopic });
+    const topicData = topics.find(t => t.topic === topic);
+    if (topicData) {
+      setFlashcards(topicData.subtopics[subtopic]);
+      setCurrentCardIndex(0);
+      setIsFlipped(false);
     }
   };
 
@@ -121,24 +159,63 @@ function FlashcardNew() {
   return (
     <div className="flashcard-new-container">
       <Title level={2}>Study with Flashcards</Title>
-      <Text className="subtitle">Select a subject to begin studying with flashcards.</Text>
-
+      
       {!selectedSubject ? (
-        <div className="subject-buttons">
-          {subjects.map((subject) => (
-            <Button
-              key={subject}
-              className="subject-button"
-              onClick={() => handleSubjectSelect(subject)}
-            >
-              {subject}
-            </Button>
-          ))}
-        </div>
-      ) : (
+        // Subject Selection
         <>
+          <Text className="subtitle">Select a subject to begin studying with flashcards.</Text>
+          <div className="subject-buttons">
+            {subjects.map((subject) => (
+              <Button
+                key={subject}
+                className="subject-button"
+                onClick={() => handleSubjectSelect(subject)}
+              >
+                {subject}
+              </Button>
+            ))}
+          </div>
+        </>
+      ) : !selectedTopic ? (
+        // Topic Selection
+        <>
+          <Text className="subtitle">Select a topic from {selectedSubject} to study.</Text>
           <Button className="back-button" onClick={() => setSelectedSubject(null)}>
             ← Back to Subjects
+          </Button>
+          
+          <div className="topics-grid">
+            {topics.map((topicGroup) => (
+              <div key={topicGroup.topic} className="topic-group">
+                <Title level={4}>{topicGroup.topic}</Title>
+                <div className="subtopic-buttons">
+                  {Object.entries(topicGroup.subtopics).map(([subtopic, cards]) => (
+                    <Button
+                      key={subtopic}
+                      className="subtopic-button"
+                      onClick={() => handleTopicSelect(topicGroup.topic, subtopic)}
+                    >
+                      {subtopic}
+                      <span className="card-count">{cards.length} cards</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        // Flashcard Study
+        <>
+          <Text className="subtitle">{selectedTopic.subtopic}</Text>
+          <Button 
+            className="back-button" 
+            onClick={() => {
+              setSelectedTopic(null);
+              setFlashcards([]);
+            }}
+          >
+            ← Back to Topics
           </Button>
           
           <div className="flashcard" onClick={handleFlip}>

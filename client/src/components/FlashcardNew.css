@@ -6,15 +6,20 @@
   background: #f0f2f5;
 }
 
-.subject-buttons {
+.subject-buttons,
+.subtopic-buttons {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin: 2rem auto;
+  margin: 1rem auto;
+}
+
+.subject-buttons {
   max-width: 600px;
 }
 
-.subject-button {
+.subject-button,
+.subtopic-button {
   height: 50px;
   font-size: 1.1rem;
   background: white;
@@ -23,9 +28,28 @@
   text-align: left;
   padding: 0 1.5rem;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.subject-button:hover {
+.subtopic-button {
+  height: 45px;
+  font-size: 1rem;
+  background: #f8f9fa;
+}
+
+.card-count {
+  font-size: 0.9rem;
+  color: #666;
+  background: #fff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+}
+
+.subject-button:hover,
+.subtopic-button:hover {
   border-color: #1e3c72;
   color: #1e3c72;
   transform: translateX(10px);
@@ -35,6 +59,28 @@
   margin-bottom: 2rem;
   color: #1e3c72;
   border-color: #1e3c72;
+}
+
+.topics-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 2rem auto;
+  max-width: 800px;
+}
+
+.topic-group {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.topic-group h4 {
+  color: #1e3c72;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f0f2f5;
 }
 
 .back-button:hover {
