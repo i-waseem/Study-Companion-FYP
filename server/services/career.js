@@ -10,48 +10,37 @@ async function generateCareerGuidance(prompt) {
     }
 
     const model = genAI.getGenerativeModel({ model: 'models/gemini-2.0-flash' });
-    const result = await model.generateContent(prompt);
+    
+    // Add structure to the prompt
+    const structuredPrompt = `Based on: ${prompt}
+
+Provide exactly 3 career suggestions in this format:
+1. [Career Title] - Brief one-line description
+2. [Career Title] - Brief one-line description
+3. [Career Title] - Brief one-line description
+
+Keep it simple and direct.`;
+
+    const result = await model.generateContent(structuredPrompt);
     const response = await result.response;
     const text = response.text();
 
-    // Parse the response into career recommendations
-    const recommendations = text.split('\n\n').filter(Boolean).map(section => {
-      const lines = section.split('\n');
-      let title = '';
-      let description = '';
-      let educationPath = '';
-
-      lines.forEach(line => {
-        if (line.toLowerCase().includes('career:')) {
-          title = line.split(':')[1].trim();
-        } else if (line.toLowerCase().includes('description:')) {
-          description = line.split(':')[1].trim();
-        } else if (line.toLowerCase().includes('education:')) {
-          educationPath = line.split(':')[1].trim();
-        }
-      });
-
-      return { title, description, educationPath };
-    });
-
-    // Validate we have exactly 3 recommendations
-    if (recommendations.length !== 3) {
-      throw new Error('Expected exactly 3 career recommendations');
-    }
-
-    // Validate each recommendation has required fields
-    recommendations.forEach((rec, i) => {
-      if (!rec.title || !rec.description || !rec.educationPath) {
-        throw new Error(`Career recommendation ${i + 1} is missing required fields`);
-      }
+    // Split into lines and filter out empty ones
+    const lines = text.split('\n').filter(line => line.trim().length > 0);
+    
+    // Take only the first 3 non-empty lines
+    const recommendations = lines.slice(0, 3).map(line => {
+      const [title, ...descParts] = line.substring(3).split('-');
+      return {
+        title: title.trim(),
+        description: descParts.join('-').trim(),
+        educationPath: 'Explore specific requirements for this field'
+      };
     });
 
     return { recommendations };
   } catch (error) {
     console.error('Career Guidance Generation Error:', error);
-    if (error.response) {
-      console.error('API Response:', error.response);
-    }
     throw error;
   }
 }

@@ -35,6 +35,8 @@ function FlashcardNew() {
   // Study state
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [generatedAnswer, setGeneratedAnswer] = useState(null);
+  const [generatingAnswer, setGeneratingAnswer] = useState(false);
 
   // Fetch subjects on mount
   useEffect(() => {
@@ -109,12 +111,31 @@ function FlashcardNew() {
     }
   };
 
-  const handleFlip = () => setIsFlipped(!isFlipped);
+  const handleFlip = async () => {
+    if (!isFlipped && !generatedAnswer) {
+      try {
+        setGeneratingAnswer(true);
+        const currentCard = flashcards[currentCardIndex];
+        const response = await api.post('/flashcards-new/generate-answer', {
+          question: currentCard.question,
+          keyPoints: currentCard.answer
+        });
+        setGeneratedAnswer(response.data.answer);
+      } catch (error) {
+        console.error('Error generating answer:', error);
+        setError('Failed to generate answer. Using key points instead.');
+      } finally {
+        setGeneratingAnswer(false);
+      }
+    }
+    setIsFlipped(!isFlipped);
+  };
   
   const handleNext = () => {
     if (currentCardIndex < flashcards.length - 1) {
       setCurrentCardIndex(currentCardIndex + 1);
       setIsFlipped(false);
+      setGeneratedAnswer(null);
     }
   };
   
@@ -122,6 +143,7 @@ function FlashcardNew() {
     if (currentCardIndex > 0) {
       setCurrentCardIndex(currentCardIndex - 1);
       setIsFlipped(false);
+      setGeneratedAnswer(null);
     }
   };
 
@@ -224,7 +246,21 @@ function FlashcardNew() {
                 <p>{flashcards[currentCardIndex]?.question}</p>
               </div>
               <div className="card-back">
-                <p>{flashcards[currentCardIndex]?.answer}</p>
+                {generatingAnswer ? (
+                  <div className="generating-answer">
+                    <Spin />
+                    <p>Generating comprehensive answer...</p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="answer-text">{generatedAnswer || flashcards[currentCardIndex]?.answer}</p>
+                    {!generatedAnswer && (
+                      <div className="key-points-note">
+                        <Text type="secondary">These are the key points. Flip again to see the full answer.</Text>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
