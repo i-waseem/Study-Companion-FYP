@@ -2,7 +2,11 @@ import axios from 'axios';
 
 const instance = axios.create({
   baseURL: 'http://localhost:5000',
-  withCredentials: true
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Credentials': 'true'
+  }
 });
 
 // Add request interceptor for debugging

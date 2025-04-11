@@ -15,7 +15,7 @@ router.post('/generate', async (req, res) => {
         }
 
         // Initialize the model
-        const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+        const model = genAI.getGenerativeModel({ model: 'models/gemini-2.0-flash' });
 
         // Generate content
         const result = await model.generateContent(prompt);

@@ -1,9 +1,31 @@
 import api from '../api/config';
 
-export const getGeminiResponse = async (prompt) => {
+export const getGeminiResponse = async (endpoint = '/quotes') => {
+  try {
+    console.log('Fetching from endpoint:', endpoint);
+    const response = await api.get(endpoint);
+    console.log('AI response:', response.data);
+    
+    if (!response.data) {
+      throw new Error('Invalid response format from server');
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error('Error in getGeminiResponse:', {
+      error,
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status
+    });
+    throw error;
+  }
+};
+
+export const getCareerGuidance = async (prompt) => {
   try {
     console.log('Sending prompt to server:', prompt);
-    const response = await api.post('/career/generate', { prompt });
+    const response = await api.post('/api/career', { prompt });
     console.log('AI response:', response.data);
     
     if (!response.data || !response.data.recommendations) {
@@ -12,7 +34,7 @@ export const getGeminiResponse = async (prompt) => {
 
     return response.data.recommendations;
   } catch (error) {
-    console.error('Error in getGeminiResponse:', {
+    console.error('Error in getCareerGuidance:', {
       error,
       message: error.message,
       response: error.response?.data,

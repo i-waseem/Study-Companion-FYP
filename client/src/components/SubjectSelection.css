@@ -246,7 +246,7 @@
   bottom: 0;
   border-radius: 16px;
   padding: 2px;
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #2E8B57 100%);
+  background: linear-gradient(135deg, #304979 0%, #5e82c2 50%, #418f63 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;

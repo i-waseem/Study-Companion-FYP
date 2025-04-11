@@ -51,10 +51,10 @@ const api = {
   getDueCards: () => axiosInstance.get('/flashcards/due'),
   
   // Generic request methods
-  get: (url) => axiosInstance.get(url),
-  post: (url, data) => axiosInstance.post(url, data),
-  put: (url, data) => axiosInstance.put(url, data),
-  delete: (url) => axiosInstance.delete(url)
+  get: (url) => url.startsWith('/api/') ? axiosInstance.get(url.substring(4)) : axiosInstance.get(url),
+  post: (url, data) => url.startsWith('/api/') ? axiosInstance.post(url.substring(4), data) : axiosInstance.post(url, data),
+  put: (url, data) => url.startsWith('/api/') ? axiosInstance.put(url.substring(4), data) : axiosInstance.put(url, data),
+  delete: (url) => url.startsWith('/api/') ? axiosInstance.delete(url.substring(4)) : axiosInstance.delete(url)
 };
 
 export default api;

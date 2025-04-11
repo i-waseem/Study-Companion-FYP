@@ -56,6 +56,23 @@ async function generateCareerGuidance(prompt) {
   }
 }
 
+async function testGeminiAPI() {
+  try {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error('Gemini API key is not configured');
+    }
+
+    const model = genAI.getGenerativeModel({ model: 'models/gemini-2.0-flash' });
+    const result = await model.generateContent('Say "API is working!"');
+    const response = await result.response;
+    return response.text();
+  } catch (error) {
+    console.error('Gemini API test failed:', error);
+    throw error;
+  }
+}
+
 module.exports = {
-  generateCareerGuidance
+  generateCareerGuidance,
+  testGeminiAPI
 };

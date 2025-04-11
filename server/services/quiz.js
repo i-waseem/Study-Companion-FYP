@@ -98,7 +98,7 @@ Make sure:
 // Debug function to test API connection
 async function testGeminiAPI() {
   try {
-    const model = genAI.getGenerativeModel({ model: "models/gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: 'models/gemini-2.0-flash' });
     const result = await model.generateContent("Say 'API is working!'");
     const response = await result.response;
     return response.text();

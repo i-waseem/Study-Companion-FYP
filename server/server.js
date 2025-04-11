@@ -1,6 +1,6 @@
 // Load environment variables first
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+require('dotenv').config();
 
 // Debug environment variables
 console.log('Environment variables loaded:', {
@@ -28,13 +28,20 @@ console.log('Environment check:', {
 
 // CORS configuration - must be before other middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: true, // Allow all origins
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'Access-Control-Allow-Origin', 'Access-Control-Allow-Credentials'],
   exposedHeaders: ['Set-Cookie'],
-  preflightContinue: true
+  preflightContinue: false
 }));
+
+// Add headers to all responses
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 // Enable pre-flight requests for all routes
 app.options('*', cors());

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './CareerGuidance.css';
-import { getGeminiResponse, generateCareerGuidancePrompt } from '../utils/gemini';
+import { getCareerGuidance, generateCareerGuidancePrompt } from '../utils/gemini';
 
 function CareerGuidance() {
   const [step, setStep] = useState('assessment');
@@ -166,7 +166,7 @@ function CareerGuidance() {
     setError(null);
     try {
       const prompt = generateCareerGuidancePrompt(answers);
-      const response = await getGeminiResponse(prompt);
+      const response = await getCareerGuidance(prompt);
       setResult(response); // response is already in the correct format
       setStep('result');
     } catch (error) {
