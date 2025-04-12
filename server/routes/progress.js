@@ -3,19 +3,20 @@ const router = express.Router();
 const Progress = require('../models/Progress');
 const auth = require('../middleware/auth');
 const mongoose = require('mongoose');
+const activityTracker = require('../services/activityTracker');
 
 // Get user's progress
-router.get('/user/:userId', auth, async (req, res) => {
+router.get('/user', auth, async (req, res) => {
   try {
-    console.log('Fetching progress for user:', req.params.userId);
+    console.log('Fetching progress for user:', req.user.userId);
     
     // Ensure userId is a valid ObjectId
-    if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
+    if (!mongoose.Types.ObjectId.isValid(req.user.userId)) {
       return res.status(400).json({ message: 'Invalid user ID format' });
     }
     
     let progress = await Progress.findOne({ 
-      userId: req.params.userId 
+      userId: req.user.userId 
     });
     
     console.log('Found progress:', progress);
@@ -23,9 +24,11 @@ router.get('/user/:userId', auth, async (req, res) => {
     if (!progress) {
       console.log('No progress found, creating default');
       progress = new Progress({
-        userId: req.params.userId,
+        userId: req.user.userId,
         quizzes: [],
-        subjects: []
+        subjects: [],
+        activities: [],
+        totalStudyTime: 0
       });
       await progress.save();
       console.log('Created default progress:', progress);
@@ -116,6 +119,38 @@ router.post('/quiz', auth, async (req, res) => {
   } catch (err) {
     console.error('Error recording quiz progress:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+// Get all activities for a user
+router.get('/activities', auth, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { type, startDate, endDate } = req.query;
+    console.log('Getting activities for user:', userId);
+
+    // Validate user ID
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID format' });
+    }
+
+    // Create filter object
+    const filter = {};
+    if (type) filter.type = type;
+    if (startDate) filter.startDate = new Date(startDate);
+    if (endDate) filter.endDate = new Date(endDate);
+
+    const activities = await activityTracker.getActivities(userId, filter);
+    const stats = await activityTracker.getStats(userId);
+
+    res.json({
+      activities,
+      stats,
+      totalActivities: activities.length
+    });
+  } catch (error) {
+    console.error('Error fetching activities:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 

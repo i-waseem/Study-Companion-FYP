@@ -37,6 +37,11 @@ const feedbackRoutes = require('./routes/feedback');
 // Use routes with /api prefix
 app.use('/api/auth', authRoutes);
 app.use('/api/quiz', quizRoutes);
+// Debug middleware for progress routes
+app.use('/api/progress', (req, res, next) => {
+  console.log('Progress route hit:', req.method, req.url);
+  next();
+});
 app.use('/api/progress', progressRoutes);
 app.use('/api/curriculum', curriculumRoutes);
 app.use('/api/quotes', quotesRoutes);

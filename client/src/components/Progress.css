@@ -20,9 +20,19 @@ body {
 }
 
 .progress-container {
+  min-height: 100vh;
+  width: 100%;
+  background: var(--bg-main);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.progress-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 24px;
+  width: 100%;
+  flex: 1;
 }
 
 .section-title {

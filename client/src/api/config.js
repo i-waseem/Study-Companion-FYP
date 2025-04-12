@@ -40,7 +40,10 @@ const api = {
   getQuizHistory: () => axiosInstance.get('/quiz/history'),
   
   // Progress endpoints
-  getProgress: () => axiosInstance.get('/progress'),
+  getProgress: () => axiosInstance.get('/progress/user'),
+  getActivities: () => axiosInstance.get('/progress/activities'),
+  getAchievements: () => Promise.resolve({ data: [] }), // Placeholder until implemented
+  getAchievementSummary: () => Promise.resolve({ data: { totalAchievements: 0, currentLevel: 1, currentStreak: 0, totalStudyTime: 0 } }), // Placeholder
   getSubjectProgress: (subject) => axiosInstance.get(`/progress/${subject}`),
   updateProgress: (data) => axiosInstance.post('/progress', data),
   

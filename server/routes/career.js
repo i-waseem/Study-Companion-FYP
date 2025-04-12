@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const { generateCareerGuidance, testGeminiAPI } = require('../services/career');
+const activityTracker = require('../services/activityTracker');
 
 // Test endpoint
 router.get('/test', async (req, res) => {
@@ -24,6 +25,14 @@ router.post('/', auth, async (req, res) => {
     }
 
     const guidance = await generateCareerGuidance(prompt);
+    
+    // Track career guidance activity
+    await activityTracker.logActivity(req.user._id, 'career', {
+      prompt,
+      recommendations: guidance.recommendations || [],
+      timestamp: new Date()
+    });
+
     res.json(guidance);
   } catch (error) {
     console.error('Career guidance generation error:', error);

@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const NotificationService = require('../services/notificationService');
+const activityTracker = require('../services/activityTracker');
 
 exports.submitQuiz = async (req, res) => {
   try {
@@ -18,6 +19,14 @@ exports.submitQuiz = async (req, res) => {
     await user.updateLastActive();
     await user.updateStudyStreak();
     await user.save();
+
+    // Track quiz activity
+    await activityTracker.logActivity(userId, 'quiz', {
+      subject,
+      score,
+      totalQuestions: answers.length,
+      timestamp: new Date()
+    });
 
     // Send quiz completion notification
     await NotificationService.sendQuizCompletionNotification(userId, { subject, score });

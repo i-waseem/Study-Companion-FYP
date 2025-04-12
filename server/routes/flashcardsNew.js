@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const FlashcardSet = require('../models/FlashcardSet');
 const { generateFlashcardAnswer } = require('../services/flashcard');
+const activityTracker = require('../services/activityTracker');
 
 // Get all subjects
 router.get('/subjects', auth, async (req, res) => {
@@ -53,6 +54,14 @@ router.post('/generate-answer', auth, async (req, res) => {
     }
 
     const answer = await generateFlashcardAnswer(question, keyPoints);
+    
+    // Track flashcard activity
+    await activityTracker.logActivity(req.user._id, 'flashcard', {
+      action: 'generate-answer',
+      question,
+      hasKeyPoints: keyPoints.length > 0
+    });
+
     res.json({ answer });
   } catch (error) {
     console.error('Error generating answer:', error);
