@@ -15,6 +15,9 @@ function FlashcardStudy() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [startTime, setStartTime] = useState(null);
+  const [ratings, setRatings] = useState({});
+  const [cardsReviewed, setCardsReviewed] = useState(new Set());
 
   useEffect(() => {
     const fetchFlashcards = async () => {
@@ -24,6 +27,9 @@ function FlashcardStudy() {
         if (response.data && Array.isArray(response.data.cards)) {
           setFlashcards(response.data.cards);
           setProgress(0);
+          setStartTime(Date.now());
+          setRatings({});
+          setCardsReviewed(new Set());
         }
       } catch (err) {
         console.error('Failed to fetch flashcards:', err);
@@ -33,10 +39,38 @@ function FlashcardStudy() {
       }
     };
     fetchFlashcards();
+
+    // Log activity when component unmounts
+    return async () => {
+      if (startTime && cardsReviewed.size > 0) {
+        try {
+          const duration = Math.round((Date.now() - startTime) / 1000); // Convert to seconds
+          const ratingValues = Object.values(ratings);
+          const avgConfidence = ratingValues.length > 0 
+            ? Math.round(ratingValues.reduce((a, b) => a + b, 0) / ratingValues.length)
+            : 0;
+            
+          await api.post('/progress/activity', {
+            type: 'flashcard',
+            data: {
+              setName: `${subject} - ${topic} - ${subtopic}`,
+              cardsReviewed: cardsReviewed.size,
+              averageConfidence: avgConfidence,
+              ratings: ratings
+            },
+            duration
+          });
+        } catch (err) {
+          console.error('Failed to log flashcard activity:', err);
+        }
+      }
+    };
   }, [subject, topic, subtopic]);
 
   const handleNext = () => {
     if (currentIndex < flashcards.length - 1) {
+      // Mark current card as reviewed
+      setCardsReviewed(prev => new Set([...prev, currentIndex]));
       setCurrentIndex(prev => prev + 1);
       setIsFlipped(false);
       setProgress(((currentIndex + 2) / flashcards.length) * 100);
@@ -59,6 +93,25 @@ function FlashcardStudy() {
     setCurrentIndex(0);
     setIsFlipped(false);
     setProgress(0);
+    setStartTime(Date.now());
+    setRatings({});
+    setCardsReviewed(new Set());
+  };
+
+  const handleRating = (rating) => {
+    setRatings(prev => ({
+      ...prev,
+      [currentIndex]: rating
+    }));
+    handleNext();
+  };
+
+  const ratingLabels = {
+    1: 'Not at all',
+    2: 'Barely',
+    3: 'Somewhat',
+    4: 'Mostly',
+    5: 'Perfectly'
   };
 
   if (loading) {
@@ -112,6 +165,19 @@ function FlashcardStudy() {
       <Card
         className={`flashcard ${isFlipped ? 'flipped' : ''}`}
         onClick={handleFlip}
+        actions={[
+          ...Object.entries(ratingLabels).map(([rating, label]) => (
+            <Button
+              key={rating}
+              type={ratings[currentIndex] === Number(rating) ? 'primary' : 'default'}
+              onClick={() => handleRating(Number(rating))}
+              disabled={!isFlipped}
+              data-rating={rating}
+            >
+              {label}
+            </Button>
+          ))
+        ]}
       >
         <div className="flashcard-inner">
           <div className="flashcard-front">

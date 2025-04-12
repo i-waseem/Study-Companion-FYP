@@ -37,6 +37,8 @@ function FlashcardNew() {
   const [isFlipped, setIsFlipped] = useState(false);
   const [generatedAnswer, setGeneratedAnswer] = useState(null);
   const [generatingAnswer, setGeneratingAnswer] = useState(false);
+  const [confidenceRating, setConfidenceRating] = useState(0);
+  const [showRating, setShowRating] = useState(false);
 
   // Fetch subjects on mount
   useEffect(() => {
@@ -108,6 +110,27 @@ function FlashcardNew() {
       setFlashcards(topicData.subtopics[subtopic]);
       setCurrentCardIndex(0);
       setIsFlipped(false);
+    }
+  };
+
+  const handleConfidenceRate = async (rating) => {
+    setConfidenceRating(rating);
+    setShowRating(false);
+
+    // Log the activity with confidence rating
+    try {
+      await api.post('/progress/activity', {
+        type: 'flashcard',
+        data: {
+          subject: selectedSubject,
+          topic: selectedTopic.topic,
+          subtopic: selectedTopic.subtopic,
+          confidenceRating: rating,
+          cardIndex: currentCardIndex
+        }
+      });
+    } catch (error) {
+      console.error('Error logging confidence rating:', error);
     }
   };
 
@@ -269,18 +292,49 @@ function FlashcardNew() {
             Card {currentCardIndex + 1} of {flashcards.length}
           </div>
 
-          <div className="navigation-buttons">
-            <Button onClick={handlePrevious} disabled={currentCardIndex === 0}>
-              Previous
-            </Button>
-            <Button onClick={handleFlip}>Flip</Button>
-            <Button
-              onClick={handleNext}
-              disabled={currentCardIndex === flashcards.length - 1}
-            >
-              Next
-            </Button>
-          </div>
+          {showRating ? (
+            <div className="confidence-rating">
+              <Text>How confident are you with this answer?</Text>
+              <div className="rating-buttons">
+                {[1, 2, 3, 4, 5].map((rating) => (
+                  <Button
+                    key={rating}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent event bubbling
+                      handleConfidenceRate(rating);
+                    }}
+                    className={`rating-button rating-${rating}`}
+                  >
+                    {rating}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="navigation-buttons">
+              <Button onClick={handlePrevious} disabled={currentCardIndex === 0}>
+                Previous
+              </Button>
+              <Button onClick={handleFlip}>Flip</Button>
+              {isFlipped && !generatingAnswer && (
+                <Button 
+                  className="rate-confidence-btn"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent event bubbling
+                    setShowRating(true);
+                  }}
+                >
+                  Rate Your Confidence
+                </Button>
+              )}
+              <Button
+                onClick={handleNext}
+                disabled={currentCardIndex === flashcards.length - 1}
+              >
+                Next
+              </Button>
+            </div>
+          )}
         </>
       )}
     </div>

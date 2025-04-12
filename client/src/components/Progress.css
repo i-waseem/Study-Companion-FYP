@@ -22,21 +22,111 @@ body {
 .progress-container {
   min-height: 100vh;
   width: 100%;
-  background: var(--bg-main);
   padding: 24px;
-  display: flex;
-  flex-direction: column;
+  min-height: calc(100vh - 64px);
+  background-color: #f0f2f5;
+}
+
+.progress-header {
+  margin-bottom: 24px;
+  background: #1890ff;
+  padding: 32px;
+  border-radius: 8px;
+  color: white;
+}
+
+.progress-header h1 {
+  color: white;
+  margin-bottom: 8px;
+}
+
+.progress-header p {
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 0;
 }
 
 .progress-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-  flex: 1;
+  margin-top: -48px;
 }
 
-.section-title {
-  margin: 32px 0 24px;
+.stat-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.quiz-stats {
+  text-align: center;
+  padding: 16px;
+}
+
+.achievement-card {
+  margin-bottom: 16px;
+  transition: all 0.3s;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.achievement-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.achievement-icon {
+  font-size: 32px;
+  margin-bottom: 16px;
+  color: #1890ff;
+  text-align: center;
+}
+
+.habit-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.habit-item:last-child {
+  border-bottom: none;
+}
+
+.learning-stats .ant-card-body {
+  padding: 0 24px 24px;
+}
+
+.study-habits .ant-space {
+  padding: 8px 0;
+}
+
+.activity-filter {
+  margin-bottom: 16px;
+}
+
+.streak-info {
+  text-align: center;
+  padding: 16px;
+  background: #52c41a;
+  border-radius: 8px;
+  color: white;
+  margin-bottom: 16px;
+}
+
+.streak-info h2 {
+  color: white;
+  margin-bottom: 8px;
+}
+
+.streak-number {
+  font-size: 36px;
+  font-weight: bold;
+  margin: 8px 0;
 }
 
 /* Summary Cards */

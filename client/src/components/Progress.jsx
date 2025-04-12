@@ -1,31 +1,36 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { 
-  Card, Row, Col, Typography, Tabs, Badge, 
+  Card, Row, Col, Typography, Tabs, 
   Table, Alert, Statistic, Progress as AntProgress,
-  Tag, Space, Tooltip, Empty, Select
+  Tag, Space, Tooltip, Empty, Select, Spin
 } from 'antd';
 import { 
   TrophyOutlined, FireOutlined, ClockCircleOutlined, 
   StarOutlined, BookOutlined, BulbOutlined, RocketOutlined,
-  CheckCircleOutlined, BarChartOutlined
+  CheckCircleOutlined, BarChartOutlined,
+  QuestionCircleOutlined, ReadOutlined, CompassOutlined
 } from '@ant-design/icons';
 import { AuthContext } from '../context/AuthContext';
 import api from '../api/config';
 import './Progress.css';
 
-const { Title, Text, Paragraph } = Typography;
-const { TabPane } = Tabs;
+const { Title, Text } = Typography;
 const { Option } = Select;
 
-const rarityColors = {
-  common: '#78909C',
-  rare: '#7E57C2',
-  epic: '#FF7043',
-  legendary: '#FFD700'
+// Activity type icons mapping
+const ActivityIcon = {
+  quiz: <QuestionCircleOutlined />,
+  flashcard: <ReadOutlined />,
+  career: <CompassOutlined />,
+  notes: <BookOutlined />
 };
 
 const Progress = () => {
   const { user } = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // Stats state
   const [stats, setStats] = useState({ 
     quizzes: [], 
     subjects: [],
@@ -36,6 +41,8 @@ const Progress = () => {
       learning: 0
     }
   });
+  
+  // Activities state
   const [activities, setActivities] = useState([]);
   const [activityStats, setActivityStats] = useState({ 
     totalStudyTime: 0, 
@@ -45,58 +52,118 @@ const Progress = () => {
       career: 0,
       notes: 0
     },
-    streakData: null
+    streakData: {
+      current: 0,
+      longest: 0,
+      lastStudied: null
+    }
   });
+  
+  // Filters state
   const [selectedTimeRange, setSelectedTimeRange] = useState('week');
   const [selectedActivityType, setSelectedActivityType] = useState('all');
-  const [achievements, setAchievements] = useState([]);
-  const [summary, setSummary] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
+  // Get date range based on selected time range
+  const getDateRange = () => {
+    const now = new Date();
+    const startDate = new Date();
+    
+    switch (selectedTimeRange) {
+      case 'week':
+        startDate.setDate(now.getDate() - 7);
+        break;
+      case 'month':
+        startDate.setMonth(now.getMonth() - 1);
+        break;
+      case 'year':
+        startDate.setFullYear(now.getFullYear() - 1);
+        break;
+      default:
+        startDate.setDate(now.getDate() - 7);
+    }
+    
+    return { startDate, endDate: now };
+  };
+
+  // Fetch data from API
   useEffect(() => {
     const fetchData = async () => {
+      if (!user) return;
+      
       try {
-        const [progressRes, activitiesRes, achievementsRes, summaryRes] = await Promise.all([
+        setLoading(true);
+        setError(null);
+        
+        const { startDate, endDate } = getDateRange();
+        
+        const [progressRes, activitiesRes] = await Promise.all([
           api.getProgress(),
-          api.getActivities(),
-          api.getAchievements(),
-          api.getAchievementSummary()
+          api.getActivities({
+            type: selectedActivityType !== 'all' ? selectedActivityType : undefined,
+            startDate: startDate.toISOString(),
+            endDate: endDate.toISOString()
+          })
         ]);
+
+        if (progressRes.data) {
+          setStats({
+            quizzes: progressRes.data.quizzes || [],
+            subjects: progressRes.data.subjects || [],
+            flashcards: progressRes.data.flashcards || {
+              total: 0,
+              mastered: 0,
+              reviewing: 0,
+              learning: 0
+            }
+          });
+        }
 
         if (activitiesRes.data) {
           setActivities(activitiesRes.data.activities || []);
           const stats = activitiesRes.data.stats || {};
-          // Ensure streakData has a default value if not present
-          stats.streakData = stats.streakData || { current: 0, longest: 0, lastStudied: null };
-          setActivityStats(stats);
+          setActivityStats({
+            totalStudyTime: stats.totalStudyTime || 0,
+            activityCounts: stats.activityCounts || {
+              quiz: 0,
+              flashcard: 0,
+              career: 0,
+              notes: 0
+            },
+            streakData: stats.streakData || {
+              current: 0,
+              longest: 0,
+              lastStudied: null
+            }
+          });
         }
 
-        setStats(progressRes.data);
-        setAchievements(achievementsRes.data);
-        setSummary(summaryRes.data);
+        setLoading(false);
       } catch (err) {
-        console.error('Error fetching data:', err);
-        setError(err.response?.data?.message || 'Failed to load progress');
-      } finally {
+        console.error('Error fetching progress data:', err);
+        setError('Failed to load progress data. Please try again.');
         setLoading(false);
       }
     };
 
-    if (user?.userId) {
-      fetchData();
-    } else {
-      setLoading(false);
-    }
-  }, [user]);
+    fetchData();
+  }, [user, selectedTimeRange, selectedActivityType]);
 
+  // Loading state
   if (loading) {
-    return <div className="progress-loader">Loading progress...</div>;
+    return (
+      <div className="progress-container" style={{ textAlign: 'center', padding: '50px' }}>
+        <Space direction="vertical" size="large">
+          <Spin size="large" />
+          <Text>Loading your progress...</Text>
+        </Space>
+      </div>
+    );
   }
 
+  // Error state
   if (error) {
     return (
-      <div className="error-message">
+      <div className="progress-container" style={{ padding: '50px' }}>
         <Alert
           message="Error"
           description={error}
@@ -107,393 +174,181 @@ const Progress = () => {
     );
   }
 
-  const renderAchievementCard = (achievement) => {
-    const rarityColor = rarityColors[achievement.rarity];
-    const progress = achievement.progress || { current: 0, target: 1 };
-    const progressPercent = Math.min((progress.current / progress.target) * 100, 100);
-
+  // Not logged in state
+  if (!user) {
     return (
-      <Col xs={24} sm={12} md={8} lg={6} key={achievement._id}>
-        <Card 
-          className="achievement-card"
-          style={{ borderColor: rarityColor }}
-        >
-          <Badge.Ribbon text={achievement.rarity} color={rarityColor}>
-            <div className="achievement-icon">
-              {achievement.icon}
-            </div>
-            <Title level={4}>{achievement.name}</Title>
-            <Text>{achievement.description}</Text>
-            {!achievement.earned && (
-              <AntProgress 
-                percent={progressPercent} 
-                strokeColor={rarityColor}
-                format={() => `${progress.current}/${progress.target}`}
-              />
-            )}
-            {achievement.earned && (
-              <Text type="secondary">
-                Earned on {new Date(achievement.earnedAt).toLocaleDateString()}
-              </Text>
-            )}
-          </Badge.Ribbon>
-        </Card>
-      </Col>
-    );
-  };
-
-  const renderSummaryCards = () => {
-    const cards = [
-      {
-        icon: <TrophyOutlined />,
-        title: 'Total Achievements',
-        value: summary.totalAchievements,
-        color: '#1890ff'
-      },
-      {
-        icon: <StarOutlined />,
-        title: 'Current Level',
-        value: summary.currentLevel,
-        color: '#52c41a'
-      },
-      {
-        icon: <FireOutlined />,
-        title: 'Study Streak',
-        value: `${summary.currentStreak} days`,
-        color: '#fa8c16'
-      },
-      {
-        icon: <ClockCircleOutlined />,
-        title: 'Study Time',
-        value: `${Math.round(summary.totalStudyTime / 60)} hrs`,
-        color: '#722ed1'
-      }
-    ];
-
-    return (
-      <Row gutter={[16, 16]} className="summary-cards">
-        {cards.map((card, index) => (
-          <Col xs={12} sm={6} key={index}>
-            <Card className="summary-card">
-              <div className="summary-icon" style={{ color: card.color }}>
-                {card.icon}
-              </div>
-              <Title level={4}>{card.value}</Title>
-              <Text type="secondary">{card.title}</Text>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-    );
-  };
-
-  const renderAchievementsByCategory = () => {
-    if (!achievements.length) {
-      return <Empty description="No achievements yet. Keep studying!" />;
-    }
-
-    const categories = {
-      streak: 'Study Streaks',
-      mastery: 'Subject Mastery',
-      completion: 'Completions',
-      time: 'Study Time',
-      special: 'Special'
-    };
-
-    return (
-      <Tabs defaultActiveKey="streak">
-        {Object.entries(categories).map(([key, title]) => (
-          <TabPane tab={title} key={key}>
-            <Row gutter={[16, 16]}>
-              {achievements
-                .filter(a => a.category === key)
-                .map(renderAchievementCard)}
-            </Row>
-          </TabPane>
-        ))}
-      </Tabs>
-    );
-  };
-
-  // Quiz progress data
-  const quizColumns = [
-    {
-      title: 'Subject',
-      dataIndex: 'subject',
-      key: 'subject',
-    },
-    {
-      title: 'Topic',
-      dataIndex: 'topic',
-      key: 'topic',
-    },
-    {
-      title: 'Average Score',
-      dataIndex: 'averageScore',
-      key: 'averageScore',
-      render: (score) => `${Math.round(score)}%`
-    },
-    {
-      title: 'Quizzes Taken',
-      dataIndex: 'quizzesTaken',
-      key: 'quizzesTaken',
-    },
-    {
-      title: 'Progress',
-      dataIndex: 'progress',
-      key: 'progress',
-      render: (progress) => (
-        <AntProgress 
-          percent={Math.round(progress * 100)} 
-          status={progress >= 0.8 ? "success" : "active"}
+      <div className="progress-container" style={{ padding: '50px' }}>
+        <Alert
+          message="Not Logged In"
+          description="Please log in to view your progress."
+          type="warning"
+          showIcon
         />
-      )
-    }
-  ];
-
-  const quizData = stats?.subjects?.flatMap(subject => 
-    subject.topics.map(topic => ({
-      key: `${subject.name}-${topic.name}`,
-      subject: subject.name,
-      topic: topic.name,
-      averageScore: topic.averageScore,
-      quizzesTaken: topic.quizzesTaken,
-      progress: topic.progress
-    }))
-  ) || [];
-
-  // Recent quizzes data
-  const recentQuizColumns = [
-    {
-      title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
-      render: (date) => new Date(date).toLocaleDateString()
-    },
-    {
-      title: 'Subject',
-      dataIndex: 'subject',
-      key: 'subject',
-    },
-    {
-      title: 'Topic',
-      dataIndex: 'topic',
-      key: 'topic',
-    },
-    {
-      title: 'Score',
-      dataIndex: 'score',
-      key: 'score',
-      render: (score) => `${Math.round(score)}%`
-    }
-  ];
-
-  const recentQuizzes = stats?.recentQuizzes?.map(quiz => ({
-    key: quiz._id,
-    date: quiz.date,
-    subject: quiz.subject,
-    topic: quiz.topic,
-    score: quiz.score
-  })) || [];
+      </div>
+    );
+  }
 
   return (
     <div className="progress-container">
-      <div className="progress-header">
-        <Title level={2}>Learning Analytics</Title>
-        <Space>
-          <Select value={selectedTimeRange} onChange={setSelectedTimeRange} style={{ width: 120 }}>
-            <Option value="week">This Week</Option>
-            <Option value="month">This Month</Option>
-            <Option value="year">This Year</Option>
-            <Option value="all">All Time</Option>
-          </Select>
-        </Space>
-      </div>
-
-      {/* Overview Cards */}
-      <Row gutter={[16, 16]} className="overview-section">
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic 
-              title="Study Streak"
-              value={activityStats.streakData.current}
-              suffix="days"
-              prefix={<FireOutlined style={{ color: '#ff4d4f' }} />}
-            />
-            <Text type="secondary">Longest: {activityStats.streakData.longest} days</Text>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title="Total Study Time"
-              value={Math.round(activityStats.totalStudyTime / 60)} // Convert to hours
-              suffix="hours"
-              prefix={<ClockCircleOutlined style={{ color: '#1890ff' }} />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title="Quiz Average"
-              value={stats.quizzes.length > 0 ? 
-                Math.round(stats.quizzes.reduce((acc, quiz) => acc + quiz.score, 0) / stats.quizzes.length) : 0
-              }
-              suffix="%"
-              prefix={<TrophyOutlined style={{ color: '#52c41a' }} />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title="Flashcards Mastered"
-              value={stats.flashcards.mastered}
-              suffix={`/ ${stats.flashcards.total}`}
-              prefix={<CheckCircleOutlined style={{ color: '#722ed1' }} />}
-            />
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Activity Analysis */}
-      <Row gutter={[16, 16]} className="analysis-section">
+      <Row gutter={[16, 16]}>
+        {/* Main stats section */}
         <Col xs={24} lg={16}>
-          <Card title="Activity Distribution" extra={
-            <Select value={selectedActivityType} onChange={setSelectedActivityType} style={{ width: 120 }}>
-              <Option value="all">All Activities</Option>
-              <Option value="quiz">Quizzes</Option>
-              <Option value="flashcard">Flashcards</Option>
-              <Option value="notes">Notes</Option>
-              <Option value="career">Career</Option>
-            </Select>
-          }>
-            <Table
-              dataSource={activities.filter(activity => 
-                selectedActivityType === 'all' || activity.type === selectedActivityType
-              )}
-              columns={[
+          <Card title="Progress Overview">
+            <Space direction="vertical" style={{ width: '100%' }} size="large">
+              {/* Time range selector */}
+              <div>
+                <Text>Time Range: </Text>
+                <Select 
+                  value={selectedTimeRange}
+                  onChange={setSelectedTimeRange}
+                  style={{ width: 120, marginLeft: 8 }}
+                >
+                  <Option value="week">Last Week</Option>
+                  <Option value="month">Last Month</Option>
+                  <Option value="year">Last Year</Option>
+                </Select>
+              </div>
+
+              {/* Activity type filter */}
+              <div>
+                <Text>Activity Type: </Text>
+                <Select
+                  value={selectedActivityType}
+                  onChange={setSelectedActivityType}
+                  style={{ width: 120, marginLeft: 8 }}
+                >
+                  <Option value="all">All</Option>
+                  <Option value="quiz">Quiz</Option>
+                  <Option value="flashcard">Flashcard</Option>
+                  <Option value="notes">Notes</Option>
+                </Select>
+              </div>
+
+              {/* Activity stats */}
+              <div>
+                <Title level={4}>Activity Stats</Title>
+                <Row gutter={[16, 16]}>
+                  {Object.entries(activityStats.activityCounts).map(([type, count]) => (
+                    <Col key={type} xs={12} sm={6}>
+                      <Card>
+                        <Statistic
+                          title={type.charAt(0).toUpperCase() + type.slice(1)}
+                          value={count}
+                          prefix={ActivityIcon[type]}
+                        />
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              </div>
+            </Space>
+          </Card>
+        </Col>
+
+        {/* Side stats section */}
+        <Col xs={24} lg={8}>
+          <Card title="Learning Stats">
+            <Tabs
+              defaultActiveKey="quiz"
+              items={[
                 {
-                  title: 'Activity',
-                  dataIndex: 'type',
-                  key: 'type',
-                  render: (type) => (
-                    <Space>
-                      {type === 'quiz' && <RocketOutlined style={{ color: '#52c41a' }} />}
-                      {type === 'flashcard' && <BulbOutlined style={{ color: '#722ed1' }} />}
-                      {type === 'notes' && <BookOutlined style={{ color: '#1890ff' }} />}
-                      {type === 'career' && <StarOutlined style={{ color: '#fa8c16' }} />}
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
-                    </Space>
+                  key: 'quiz',
+                  label: 'Quiz Performance',
+                  children: (
+                    <div className="stat-group">
+                      <Statistic 
+                        title="Total Quizzes"
+                        value={stats.quizzes.length}
+                        prefix={<RocketOutlined />}
+                      />
+                      {stats.quizzes.length > 0 && (
+                        <div className="quiz-stats">
+                          <AntProgress 
+                            type="circle"
+                            percent={Math.round(stats.quizzes.reduce((acc, quiz) => acc + quiz.score, 0) / stats.quizzes.length)}
+                            size={80}
+                          />
+                          <Text type="secondary">Average Score</Text>
+                        </div>
+                      )}
+                    </div>
                   )
                 },
                 {
-                  title: 'Date & Time',
-                  dataIndex: 'timestamp',
-                  key: 'timestamp',
-                  render: (date) => new Date(date).toLocaleString()
-                },
-                {
-                  title: 'Details',
-                  dataIndex: 'data',
-                  key: 'data',
-                  render: (data) => {
-                    if (data.subject) return (
-                      <Space direction="vertical" size="small">
-                        <Text strong>{data.subject}</Text>
-                        {data.topic && <Text type="secondary">{data.topic}</Text>}
-                        {data.score && <Tag color="green">{data.score}%</Tag>}
-                      </Space>
-                    );
-                    return data.action || '-';
-                  }
-                },
-                {
-                  title: 'Duration',
-                  dataIndex: 'duration',
-                  key: 'duration',
-                  render: (mins) => mins ? (
-                    <Tooltip title={`${mins} minutes`}>
-                      {mins >= 60 ? `${Math.round(mins/60)}h ${mins%60}m` : `${mins}m`}
-                    </Tooltip>
-                  ) : '-'
+                  key: 'flashcard',
+                  label: 'Flashcard Progress',
+                  children: (
+                    <Row gutter={[8, 16]}>
+                      <Col span={12}>
+                        <Statistic 
+                          title="Total Cards"
+                          value={stats.flashcards.total}
+                          prefix={<BulbOutlined />}
+                        />
+                      </Col>
+                      <Col span={12}>
+                        <Statistic 
+                          title="Mastered"
+                          value={stats.flashcards.mastered}
+                          prefix={<CheckCircleOutlined />}
+                        />
+                      </Col>
+                      <Col span={24}>
+                        <AntProgress 
+                          percent={stats.flashcards.total > 0 ? 
+                            Math.round((stats.flashcards.mastered / stats.flashcards.total) * 100) : 0
+                          }
+                          status="active"
+                          strokeColor="#722ed1"
+                        />
+                      </Col>
+                    </Row>
+                  )
                 }
               ]}
-              pagination={{ 
-                pageSize: 10,
-                showSizeChanger: true,
-                showTotal: (total) => `Total ${total} activities`
-              }}
             />
           </Card>
-        </Col>
 
-        <Col xs={24} lg={8}>
-          <Card title="Learning Stats" className="learning-stats">
-            <Tabs defaultActiveKey="quiz">
-              <TabPane tab="Quiz Performance" key="quiz">
-                <div className="stat-group">
-                  <Statistic 
-                    title="Total Quizzes"
-                    value={stats.quizzes.length}
-                    prefix={<RocketOutlined />}
-                  />
-                  {stats.quizzes.length > 0 && (
-                    <div className="quiz-stats">
-                      <AntProgress 
-                        type="circle"
-                        percent={Math.round(stats.quizzes.reduce((acc, quiz) => acc + quiz.score, 0) / stats.quizzes.length)}
-                        width={80}
-                      />
-                      <Text type="secondary">Average Score</Text>
-                    </div>
-                  )}
-                </div>
-              </TabPane>
-              <TabPane tab="Flashcard Progress" key="flashcard">
-                <Row gutter={[8, 16]}>
-                  <Col span={12}>
-                    <Statistic 
-                      title="Total Cards"
-                      value={stats.flashcards.total}
-                      prefix={<BulbOutlined />}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <Statistic 
-                      title="Mastered"
-                      value={stats.flashcards.mastered}
-                      prefix={<CheckCircleOutlined />}
-                    />
-                  </Col>
-                  <Col span={24}>
-                    <AntProgress 
-                      percent={stats.flashcards.total > 0 ? 
-                        Math.round((stats.flashcards.mastered / stats.flashcards.total) * 100) : 0
-                      }
-                      status="active"
-                      strokeColor="#722ed1"
-                    />
-                  </Col>
-                </Row>
-              </TabPane>
-            </Tabs>
-          </Card>
-
-          <Card title="Study Habits" className="study-habits" style={{ marginTop: '16px' }}>
+          <Card title="Study Habits" style={{ marginTop: '16px' }}>
             <Space direction="vertical" style={{ width: '100%' }}>
               <div className="habit-item">
-                <Text>Best Study Time</Text>
-                <Tag color="blue">Evening</Tag>
+                <Text>Current Streak</Text>
+                <Tag color="blue">{activityStats.streakData.current} days</Tag>
               </div>
               <div className="habit-item">
-                <Text>Most Active Day</Text>
-                <Tag color="green">Wednesday</Tag>
+                <Text>Longest Streak</Text>
+                <Tag color="gold">{activityStats.streakData.longest} days</Tag>
               </div>
               <div className="habit-item">
-                <Text>Average Session</Text>
-                <Tag color="purple">45 minutes</Tag>
+                <Text>Total Study Time</Text>
+                <Tag color="purple">
+                  {activityStats.totalStudyTime >= 60
+                    ? `${Math.floor(activityStats.totalStudyTime / 60)}h ${activityStats.totalStudyTime % 60}m`
+                    : `${activityStats.totalStudyTime}m`}
+                </Tag>
+              </div>
+              <div className="habit-item">
+                <Text>Last Active</Text>
+                <Tag color="cyan">
+                  {activityStats.streakData.lastStudied
+                    ? new Date(activityStats.streakData.lastStudied).toLocaleDateString()
+                    : 'Never'}
+                </Tag>
+              </div>
+              <div className="habit-item">
+                <Text>Activity Distribution</Text>
+                <div style={{ marginTop: '8px' }}>
+                  {Object.entries(activityStats.activityCounts).map(([type, count]) => (
+                    <Tag 
+                      key={type} 
+                      icon={ActivityIcon[type]}
+                      color={type === 'quiz' ? 'green' : type === 'flashcard' ? 'purple' : type === 'notes' ? 'blue' : 'orange'} 
+                      style={{ margin: '0 4px 4px 0' }}
+                    >
+                      {type}: {count}
+                    </Tag>
+                  ))}
+                </div>
               </div>
             </Space>
           </Card>

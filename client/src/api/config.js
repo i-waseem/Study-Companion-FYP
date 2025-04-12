@@ -41,11 +41,11 @@ const api = {
   
   // Progress endpoints
   getProgress: () => axiosInstance.get('/progress/user'),
-  getActivities: () => axiosInstance.get('/progress/activities'),
+  getActivities: (params) => axiosInstance.get('/progress/activities', { params }),
   getAchievements: () => Promise.resolve({ data: [] }), // Placeholder until implemented
   getAchievementSummary: () => Promise.resolve({ data: { totalAchievements: 0, currentLevel: 1, currentStreak: 0, totalStudyTime: 0 } }), // Placeholder
   getSubjectProgress: (subject) => axiosInstance.get(`/progress/${subject}`),
-  updateProgress: (data) => axiosInstance.post('/progress', data),
+  updateProgress: (data) => axiosInstance.post('/progress/activity', data),
   
   // Flashcard endpoints
   getFlashcards: (subject) => axiosInstance.get(`/flashcards/${subject}`),

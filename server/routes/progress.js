@@ -123,6 +123,25 @@ router.post('/quiz', auth, async (req, res) => {
 });
 
 // Get all activities for a user
+// Log an activity
+router.post('/activity', auth, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { type, data, duration } = req.body;
+    
+    if (!type || !data) {
+      return res.status(400).json({ message: 'Type and data are required' });
+    }
+
+    const activity = await activityTracker.logActivity(userId, type, data, duration);
+    res.json(activity);
+  } catch (error) {
+    console.error('Error logging activity:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get user activities
 router.get('/activities', auth, async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -140,7 +159,7 @@ router.get('/activities', auth, async (req, res) => {
     if (startDate) filter.startDate = new Date(startDate);
     if (endDate) filter.endDate = new Date(endDate);
 
-    const activities = await activityTracker.getActivities(userId, filter);
+    const activities = await activityTracker.getUserActivities(userId, filter);
     const stats = await activityTracker.getStats(userId);
 
     res.json({

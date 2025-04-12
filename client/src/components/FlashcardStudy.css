@@ -10,17 +10,18 @@
   align-items: center;
   justify-content: center;
   min-height: 300px;
+  gap: 1rem;
 }
 
 .progress-container {
-  margin: 2rem 0;
+  margin: 1rem 0;
   text-align: center;
 }
 
 .flashcard {
   perspective: 1000px;
-  height: 300px;
   margin: 2rem 0;
+  min-height: 300px;
   cursor: pointer;
 }
 
@@ -60,9 +61,35 @@
 
 .controls {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 1rem;
   margin-top: 2rem;
 }
+
+/* Rating buttons */
+.ant-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 1rem !important;
+}
+
+.ant-card-actions > li {
+  width: auto !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
+.ant-card-actions button {
+  min-width: 100px;
+}
+
+/* Confidence colors */
+.ant-btn-primary[data-rating="1"] { background-color: #ff4d4f; }
+.ant-btn-primary[data-rating="2"] { background-color: #ffa940; }
+.ant-btn-primary[data-rating="3"] { background-color: #fadb14; }
+.ant-btn-primary[data-rating="4"] { background-color: #73d13d; }
+.ant-btn-primary[data-rating="5"] { background-color: #52c41a; }
 
 .ant-progress {
   margin-bottom: 1rem;

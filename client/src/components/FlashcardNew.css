@@ -369,6 +369,47 @@ h2.ant-typography {
   box-shadow: none !important;
 }
 
+.confidence-rating {
+  text-align: center;
+  margin: 20px 0;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.rating-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.rating-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 0;
+  font-weight: bold;
+}
+
+.rating-1 { background-color: #ff4d4f; color: white; }
+.rating-2 { background-color: #ffa39e; color: white; }
+.rating-3 { background-color: #ffd666; color: black; }
+.rating-4 { background-color: #95de64; color: white; }
+.rating-5 { background-color: #52c41a; color: white; }
+
+.rate-confidence-btn {
+  background-color: #722ed1 !important;
+  color: white !important;
+  border-color: #722ed1 !important;
+}
+
+.rate-confidence-btn:hover {
+  background-color: #5b21b6 !important;
+  border-color: #5b21b6 !important;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .flashcard-new-container {
