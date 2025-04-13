@@ -21,7 +21,7 @@ function Quiz() {
   const [score, setScore] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
-  const [startTime] = useState(new Date());
+  const [startTime, setStartTime] = useState(null);
   const [incorrectAnswers, setIncorrectAnswers] = useState([]);
 
   useEffect(() => {
@@ -72,6 +72,7 @@ function Quiz() {
         setScore(0);
         setQuizCompleted(false);
         setIsCorrect(null);
+        setStartTime(new Date()); // Start timing when quiz begins
       } catch (err) {
         console.error('Error generating quiz:', err);
         setError(err.message || 'Failed to generate quiz');
@@ -111,12 +112,58 @@ function Quiz() {
   const handleContinue = async () => {
     if (currentQuestionIndex === questions.length - 1) {
       try {
-        // Record quiz progress
+        const duration = Math.round((new Date() - startTime) / 1000); // Convert to seconds
+        const subject = decodeURIComponent(subjectId);
+        const topic = decodeURIComponent(topicId);
+        const subtopic = decodeURIComponent(subtopicId);
+
+        // Prepare detailed question data
+        const questionDetails = incorrectAnswers.map(detail => ({
+          question: detail.question,
+          userAnswer: detail.userAnswer,
+          correctAnswer: detail.correctAnswer,
+          isCorrect: false,
+          learningObjective: questions.find(q => q.question === detail.question)?.learningObjective
+        }));
+
+        // Add correct answers
+        questions.forEach((q, index) => {
+          if (!incorrectAnswers.find(wrong => wrong.question === q.question)) {
+            questionDetails.push({
+              question: q.question,
+              userAnswer: q.options[selectedAnswerIndex],
+              correctAnswer: q.correctAnswer,
+              isCorrect: true,
+              learningObjective: q.learningObjective
+            });
+          }
+        });
+
+        // Record detailed quiz progress
         await api.post('/progress/quiz', {
-          subject: decodeURIComponent(subjectId),
-          topic: decodeURIComponent(topicId),
-          score,
-          totalQuestions: questions.length
+          subject,
+          topic,
+          subtopic,
+          score: Math.round((score / questions.length) * 100),
+          totalQuestions: questions.length,
+          correctAnswers: score,
+          questionDetails,
+          duration
+        });
+
+        // Log quiz activity for progress tracking
+        await api.post('/progress/activity', {
+          type: 'quiz',
+          data: {
+            subject,
+            topic,
+            subtopic,
+            score: Math.round((score / questions.length) * 100),
+            totalQuestions: questions.length,
+            correctAnswers: score,
+            weakAreas: incorrectAnswers.map(wrong => wrong.question)
+          },
+          duration
         });
       } catch (err) {
         console.error('Error recording quiz progress:', err);

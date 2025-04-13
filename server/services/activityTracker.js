@@ -5,6 +5,75 @@ const Progress = require('../models/Progress');
  */
 class ActivityTracker {
   /**
+   * Update user's streak data
+   * @param {string} userId - User ID
+   * @param {Date} currentTime - Current timestamp
+   * @private
+   */
+  static async _updateStreak(userId, currentTime = new Date()) {
+    try {
+      const progress = await Progress.findOne({ userId });
+      if (!progress) return;
+
+      const lastStudied = progress.studyHabits?.streakData?.lastStudied;
+      const currentStreak = progress.studyHabits?.streakData?.current || 0;
+      const longestStreak = progress.studyHabits?.streakData?.longest || 0;
+
+      // Initialize dates
+      const today = new Date(currentTime.setHours(0, 0, 0, 0));
+      const lastStudyDate = lastStudied ? new Date(new Date(lastStudied).setHours(0, 0, 0, 0)) : null;
+      
+      // Calculate days difference
+      const daysDiff = lastStudyDate ? Math.floor((today - lastStudyDate) / (1000 * 60 * 60 * 24)) : null;
+
+      let newStreak = currentStreak;
+      
+      // If this is the first activity ever
+      if (!lastStudied) {
+        newStreak = 1;
+      }
+      // If studied today already, maintain streak
+      else if (daysDiff === 0) {
+        // Do nothing, maintain current streak
+      }
+      // If studied yesterday, increment streak
+      else if (daysDiff === 1) {
+        newStreak += 1;
+      }
+      // If missed a day or more, reset streak
+      else {
+        newStreak = 1;
+      }
+
+      // Update longest streak if current is higher
+      const newLongestStreak = Math.max(newStreak, longestStreak);
+
+      // Update progress with new streak data
+      await Progress.findOneAndUpdate(
+        { userId },
+        {
+          $set: {
+            'studyHabits.streakData': {
+              current: newStreak,
+              longest: newLongestStreak,
+              lastStudied: currentTime
+            }
+          }
+        },
+        { new: true }
+      );
+
+      return {
+        current: newStreak,
+        longest: newLongestStreak,
+        lastStudied: currentTime
+      };
+    } catch (error) {
+      console.error('Error updating streak:', error);
+      throw error;
+    }
+  }
+  /**
    * Log a user activity
    * @param {string} userId - User ID
    * @param {string} type - Activity type (quiz, flashcard, notes, etc)
@@ -12,6 +81,7 @@ class ActivityTracker {
    * @param {number} duration - Duration in seconds
    */
   static async logActivity(userId, type, data = {}, duration = 0) {
+    const currentTime = new Date();
     try {
       // Enhance activity data based on type
       let enhancedData = { ...data };
@@ -55,19 +125,23 @@ class ActivityTracker {
       const activity = {
         type,
         timestamp: new Date(),
-        data: enhancedData,
-        duration: Math.round(duration)
+        data: enhancedData
       };
 
-      await Progress.findOneAndUpdate(
+      // Update activity
+      const progress = await Progress.findOneAndUpdate(
         { userId },
         {
           $push: { activities: activity },
-          $set: { lastActive: new Date() },
-          $inc: { totalStudyTime: Math.round(duration / 60) } // Convert to minutes for total time
+          $set: { lastActive: currentTime }
         },
         { new: true, upsert: true }
       );
+
+      // Update streak if this is a study-related activity
+      if (['quiz', 'flashcard', 'notes'].includes(type)) {
+        await this._updateStreak(userId, currentTime);
+      }
 
       return activity;
     } catch (error) {

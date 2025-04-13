@@ -9,14 +9,29 @@ const flashcardProgressSchema = new mongoose.Schema({
   confidence: { type: Number, min: 0, max: 100, default: 0 }
 });
 
-const studySessionSchema = new mongoose.Schema({
-  date: { type: Date, required: true },
-  duration: { type: Number, required: true }, // in minutes
-  timeOfDay: { type: String, enum: ['morning', 'afternoon', 'evening', 'night'] },
-  subject: String,
-  topic: String,
-  type: { type: String, enum: ['quiz', 'flashcard', 'notes', 'career'], required: true },
-  data: mongoose.Schema.Types.Mixed
+const quizAttemptSchema = new mongoose.Schema({
+  score: { type: Number, required: true },
+  totalQuestions: { type: Number, required: true },
+  correctAnswers: { type: Number, required: true },
+  timestamp: { type: Date, default: Date.now },
+  questionDetails: [{
+    question: String,
+    userAnswer: String,
+    correctAnswer: String,
+    isCorrect: Boolean
+  }]
+});
+
+const subtopicProgressSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  learningObjectives: [String],
+  status: { type: String, enum: ['not_started', 'in_progress', 'mastered'], default: 'not_started' },
+  attempts: [quizAttemptSchema],
+  bestScore: { type: Number, default: 0 },
+  averageScore: { type: Number, default: 0 },
+  totalAttempts: { type: Number, default: 0 },
+  lastAttempt: { type: Date },
+  weakAreas: [String] // Store concepts/topics where student consistently makes mistakes
 });
 
 const topicProgressSchema = new mongoose.Schema({
@@ -24,9 +39,13 @@ const topicProgressSchema = new mongoose.Schema({
   status: { type: String, enum: ['not_started', 'in_progress', 'completed'], default: 'not_started' },
   lastStudied: { type: Date },
   confidence: { type: Number, min: 0, max: 100, default: 0 },
-  timeSpent: { type: Number, default: 0 }, // in minutes
-  quizzesTaken: { type: Number, default: 0 },
-  averageScore: { type: Number, default: 0 }
+  subtopics: [subtopicProgressSchema],
+  overallProgress: {
+    averageScore: { type: Number, default: 0 },
+    totalQuizzesTaken: { type: Number, default: 0 },
+    masteredSubtopics: { type: Number, default: 0 },
+    inProgressSubtopics: { type: Number, default: 0 }
+  }
 });
 
 const progressSchema = new mongoose.Schema({
@@ -36,13 +55,24 @@ const progressSchema = new mongoose.Schema({
     ref: 'User'
   },
   quizzes: [{
-    subject: String,
-    topic: String,
-    score: Number,
-    date: { type: Date, default: Date.now },
-    timeSpent: Number, // in minutes
-    questionsTotal: Number,
-    questionsCorrect: Number
+    subject: { type: String, required: true },
+    topic: { type: String, required: true },
+    subtopic: { type: String, required: true },
+    score: { type: Number, required: true },
+    totalQuestions: { type: Number, required: true },
+    correctAnswers: { type: Number, required: true },
+    timestamp: { type: Date, default: Date.now },
+    questionDetails: [{
+      question: String,
+      userAnswer: String,
+      correctAnswer: String,
+      isCorrect: Boolean,
+      learningObjective: String
+    }],
+    improvement: {
+      previousBest: Number,
+      improvement: Number // Difference from previous best
+    }
   }],
   subjects: [{
     name: String,
@@ -60,14 +90,7 @@ const progressSchema = new mongoose.Schema({
       current: { type: Number, default: 0 },
       longest: { type: Number, default: 0 },
       lastStudied: Date
-    },
-    totalStudyTime: { type: Number, default: 0 }, // in minutes
-    studySessions: [studySessionSchema],
-    preferredTimes: [{
-      day: { type: String, enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] },
-      timeOfDay: { type: String, enum: ['morning', 'afternoon', 'evening', 'night'] },
-      frequency: { type: Number, default: 0 }
-    }]
+    }
   },
   activities: [{
     type: { type: String, enum: ['quiz', 'flashcard', 'notes', 'career'], required: true },

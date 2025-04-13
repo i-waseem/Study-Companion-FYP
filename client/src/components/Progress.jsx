@@ -3,7 +3,7 @@ import {
   Card, Row, Col, Typography, 
   Statistic, Progress as AntProgress,
   Tag, Space, Empty, Select, Spin,
-  Alert
+  Alert, Timeline
 } from 'antd';
 import { 
   TrophyOutlined, FireOutlined, ClockCircleOutlined, 
@@ -47,7 +47,6 @@ const Progress = () => {
   // Activities state
   const [activities, setActivities] = useState([]);
   const [activityStats, setActivityStats] = useState({ 
-    totalStudyTime: 0, 
     activityCounts: { 
       quiz: 0, 
       flashcard: 0, 
@@ -60,6 +59,25 @@ const Progress = () => {
       lastStudied: null
     }
   });
+
+
+
+  // Format last active time
+  const formatLastActive = (timestamp) => {
+    if (!timestamp) return 'Never';
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
+    
+    if (diffInHours < 24) {
+      if (diffInHours < 1) {
+        const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+        return diffInMinutes <= 1 ? 'Just now' : `${diffInMinutes}m ago`;
+      }
+      return `${diffInHours}h ago`;
+    }
+    return date.toLocaleDateString();
+  };
   
   // Filters state
   const [selectedTimeRange, setSelectedTimeRange] = useState('week');
@@ -108,20 +126,51 @@ const Progress = () => {
         ]);
 
         if (progressRes.data) {
+          const { studyHabits = {}, quizzes = [], subjects = [], flashcards = {} } = progressRes.data;
+          
           setStats({
-            quizzes: progressRes.data.quizzes || [],
-            subjects: progressRes.data.subjects || [],
-            flashcards: progressRes.data.flashcards || {
-              total: 0,
-              mastered: 0,
-              reviewing: 0,
-              learning: 0
+            quizzes,
+            subjects,
+            flashcards: {
+              total: flashcards.total || 0,
+              mastered: flashcards.mastered || 0,
+              reviewing: flashcards.reviewing || 0,
+              learning: flashcards.learning || 0
             }
           });
+
+          // Update activity stats from studyHabits
+          setActivityStats(prevStats => ({
+            ...prevStats,
+            totalStudyTime: studyHabits.totalStudyTime || 0,
+            streakData: studyHabits.streakData || {
+              current: 0,
+              longest: 0,
+              lastStudied: null
+            }
+          }));
         }
 
         if (activitiesRes.data) {
           setActivities(activitiesRes.data.activities || []);
+          // Set activity stats from response
+          if (activitiesRes.data.stats) {
+            const stats = activitiesRes.data.stats;
+            setActivityStats({
+              totalStudyTime: stats.studyHabits?.totalStudyTime || 0,
+              activityCounts: stats.activityCounts || {
+                quiz: 0,
+                flashcard: 0,
+                career: 0,
+                notes: 0
+              },
+              streakData: stats.studyHabits?.streakData || {
+                current: 0,
+                longest: 0,
+                lastStudied: null
+              }
+            });
+          }
           const stats = activitiesRes.data.stats || {};
           setActivityStats({
             totalStudyTime: stats.totalStudyTime || 0,
@@ -178,173 +227,215 @@ const Progress = () => {
 
   // Error state
   if (error) {
-    return (
-      <div className="progress-container">
-        <Alert
-          message="Error"
-          description={error}
-          type="error"
-          showIcon
-        />
-      </div>
-    );
-  }
-
-  // Main content
   return (
     <div className="progress-container">
-      {/* Filters Section */}
-      <Row gutter={[16, 16]}>
-        {/* Overview */}
-        <Col xs={24}>
-          <Card title={<Title level={4}><FireOutlined /> Study Overview</Title>}>
-            <Row gutter={[16, 16]}>
-              <Col xs={24} md={8}>
+      <Alert
+        message="Not Logged In"
+        description="Please log in to view your progress."
+        type="warning"
+        showIcon
+      />
+    </div>
+  );
+}
+
+// Loading state
+if (loading) {
+  return (
+    <div className="progress-container">
+      <Space direction="vertical" align="center" style={{ width: '100%', padding: '50px' }}>
+        <Spin size="large" />
+        <Text>Loading your progress...</Text>
+      </Space>
+    </div>
+  );
+}
+
+// Error state
+if (error) {
+  return (
+    <div className="progress-container">
+      <Alert
+        message="Error"
+        description={error}
+        type="error"
+        showIcon
+      />
+    </div>
+  );
+}
+
+// Main content
+return (
+  <div className="progress-container">
+    <Row gutter={[16, 16]}>
+      {/* Overview */}
+      <Col xs={24}>
+        <Card title={<Title level={4}><FireOutlined /> Study Overview</Title>}>
+          <Row gutter={[16, 16]} className="stats-overview">
+            <Col xs={12}>
+              <Card>
                 <Statistic
                   title="Current Streak"
-                  value={activityStats.streakData.current}
-                  suffix="days"
-                  prefix={<TrophyOutlined style={{ color: '#faad14' }} />}
+                  value={`${activityStats.streakData.current} days`}
+                  prefix={<FireOutlined style={{ color: '#ff4d4f' }} />}
                 />
-              </Col>
-              <Col xs={24} md={8}>
-                <Statistic
-                  title="Study Time"
-                  value={activityStats.totalStudyTime}
-                  suffix="m"
-                  prefix={<ClockCircleOutlined style={{ color: '#1890ff' }} />}
-                />
-              </Col>
-              <Col xs={24} md={8}>
+              </Card>
+            </Col>
+            <Col xs={12}>
+              <Card>
                 <Statistic
                   title="Last Active"
-                  value={activityStats.streakData.lastStudied ? 
-                    new Date(activityStats.streakData.lastStudied).toLocaleDateString() : 
-                    'Never'
-                  }
+                  value={formatLastActive(activityStats.streakData.lastStudied)}
                   prefix={<CalendarOutlined style={{ color: '#52c41a' }} />}
                 />
-              </Col>
-            </Row>
-          </Card>
-        </Col>
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      </Col>
 
-        {/* Quiz Progress */}
-        <Col xs={24}>
-          <Card 
-            title={<Title level={4}><QuestionCircleOutlined /> Quiz Progress</Title>}
-            className="subject-progress-card"
-          >
-            {stats.quizzes.length > 0 ? (
-              <div>
-                <Row gutter={[16, 16]}>
-                  <Col xs={24} md={12}>
+      {/* Flashcard Progress */}
+      <Col xs={24}>
+        <Card title={<Title level={4}><ReadOutlined /> Flashcard Progress</Title>}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={8}>
+              <Card className="stat-card">
+                <Statistic
+                  title="Total Flashcards"
+                  value={stats.flashcards.total}
+                  prefix={<ReadOutlined style={{ color: '#722ed1' }} />}
+                />
+                <AntProgress
+                  percent={stats.flashcards.total > 0 ? 
+                    Math.round((stats.flashcards.mastered / stats.flashcards.total) * 100) : 0
+                  }
+                  strokeColor={{
+                    '0%': '#722ed1',
+                    '100%': '#52c41a'
+                  }}
+                  style={{ marginTop: 16 }}
+                />
+              </Card>
+            </Col>
+            <Col xs={24} md={16}>
+              <Row gutter={[16, 16]}>
+                <Col span={8}>
+                  <Card className="mastery-card reviewing">
                     <Statistic
-                      title="Total Quizzes"
-                      value={stats.quizzes.length}
-                      prefix={<QuestionCircleOutlined style={{ color: '#1890ff' }} />}
+                      title="Reviewing"
+                      value={stats.flashcards.reviewing}
+                      suffix={stats.flashcards.total > 0 ? 
+                        `(${Math.round((stats.flashcards.reviewing / stats.flashcards.total) * 100)}%)` : 
+                        '(0%)'
+                      }
                     />
-                  </Col>
-                  <Col xs={24} md={12}>
+                  </Card>
+                </Col>
+                <Col span={8}>
+                  <Card className="mastery-card learning">
                     <Statistic
-                      title="Average Score"
-                      value={`${Math.round(stats.quizzes.reduce((acc, quiz) => acc + quiz.score, 0) / stats.quizzes.length)}%`}
-                      prefix={<TrophyOutlined style={{ color: '#52c41a' }} />}
+                      title="Learning"
+                      value={stats.flashcards.learning}
+                      suffix={stats.flashcards.total > 0 ? 
+                        `(${Math.round((stats.flashcards.learning / stats.flashcards.total) * 100)}%)` : 
+                        '(0%)'
+                      }
                     />
-                  </Col>
-                </Row>
-                <div style={{ marginTop: 24 }}>
-                  <Text strong>Recent Quiz Performance</Text>
-                  <div className="quiz-history">
-                    {stats.quizzes.slice(-3).reverse().map((quiz, index) => (
-                      <Card key={index} className="quiz-card">
-                        <div className="quiz-info">
-                          <Text strong>{quiz.subject}</Text>
-                          <div>{quiz.topic}</div>
-                          <div className="quiz-score">{quiz.score}%</div>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <Empty description="No quizzes completed yet" />
-            )}
-          </Card>
-        </Col>
+                  </Card>
+                </Col>
+                <Col span={8}>
+                  <Card className="mastery-card mastered">
+                    <Statistic
+                      title="Mastered"
+                      value={stats.flashcards.mastered}
+                      suffix={stats.flashcards.total > 0 ? 
+                        `(${Math.round((stats.flashcards.mastered / stats.flashcards.total) * 100)}%)` : 
+                        '(0%)'
+                      }
+                    />
+                  </Card>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Card>
+      </Col>
 
-        {/* Flashcard Progress */}
-        <Col xs={24}>
-          <Card 
-            title={<Title level={4}><ReadOutlined /> Flashcard Progress</Title>}
-            className="flashcard-progress-card"
-          >
-            <Row gutter={[16, 16]}>
-              <Col xs={24} md={8}>
-                <Card className="stat-card">
+      {/* Quiz Progress */}
+      <Col xs={24}>
+        <Card title={<Title level={4}><QuestionCircleOutlined /> Quiz Progress</Title>}>
+          {stats.quizzes.length > 0 ? (
+            <div>
+              <Row gutter={[16, 16]}>
+                <Col xs={24} md={8}>
                   <Statistic
-                    title="Total Flashcards"
-                    value={stats.flashcards.total}
-                    prefix={<ReadOutlined style={{ color: '#722ed1' }} />}
+                    title="Total Quizzes"
+                    value={stats.quizzes.length}
+                    prefix={<QuestionCircleOutlined style={{ color: '#1890ff' }} />}
                   />
-                  <AntProgress
-                    percent={stats.flashcards.total > 0 ? 
-                      Math.round((stats.flashcards.mastered / stats.flashcards.total) * 100) : 0
-                    }
-                    strokeColor={{
-                      '0%': '#722ed1',
-                      '100%': '#52c41a',
-                    }}
-                    style={{ marginTop: 16 }}
+                </Col>
+                <Col xs={24} md={8}>
+                  <Statistic
+                    title="Average Score"
+                    value={`${Math.round(stats.quizzes.reduce((acc, quiz) => acc + quiz.score, 0) / stats.quizzes.length)}%`}
+                    prefix={<TrophyOutlined style={{ color: '#52c41a' }} />}
                   />
-                </Card>
-              </Col>
-              <Col xs={24} md={16}>
-                <Row gutter={[16, 16]}>
-                  <Col span={8}>
-                    <Card className="mastery-card mastered">
-                      <Statistic
-                        title="Mastered"
-                        value={stats.flashcards.mastered}
-                        suffix={stats.flashcards.total > 0 ? 
-                          `(${Math.round((stats.flashcards.mastered / stats.flashcards.total) * 100)}%)` : 
-                          '(0%)'
-                        }
-                      />
-                    </Card>
-                  </Col>
-                  <Col span={8}>
-                    <Card className="mastery-card learning">
-                      <Statistic
-                        title="Learning"
-                        value={stats.flashcards.learning}
-                        suffix={stats.flashcards.total > 0 ? 
-                          `(${Math.round((stats.flashcards.learning / stats.flashcards.total) * 100)}%)` : 
-                          '(0%)'
-                        }
-                      />
-                    </Card>
-                  </Col>
-                  <Col span={8}>
-                    <Card className="mastery-card reviewing">
-                      <Statistic
-                        title="Reviewing"
-                        value={stats.flashcards.reviewing}
-                        suffix={stats.flashcards.total > 0 ? 
-                          `(${Math.round((stats.flashcards.reviewing / stats.flashcards.total) * 100)}%)` : 
-                          '(0%)'
-                        }
-                      />
-                    </Card>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Card>
-        </Col>
-      </Row>
-    </div>
+                </Col>
+                <Col xs={24} md={8}>
+                  <Statistic
+                    title="Mastered Topics"
+                    value={stats.subjects.reduce((acc, subject) => 
+                      acc + subject.topics.reduce((tacc, topic) => 
+                        tacc + (topic.subtopics?.filter(st => st.status === 'mastered')?.length || 0), 0
+                      ), 0
+                    )}
+                    prefix={<TrophyOutlined style={{ color: '#722ed1' }} />}
+                  />
+                </Col>
+              </Row>
+
+              {/* Recent Quiz Attempts */}
+              <Card style={{ marginTop: 16 }} type="inner" title="Recent Quiz Attempts">
+                <Timeline>
+                  {stats.quizzes.slice(-5).reverse().map((quiz, index) => (
+                    <Timeline.Item 
+                      key={index}
+                      color={quiz.score >= 80 ? 'green' : quiz.score >= 60 ? 'blue' : 'red'}
+                    >
+                      <Card size="small">
+                        <Row gutter={[16, 8]}>
+                          <Col span={24}>
+                            <Text strong>{quiz.subject} - {quiz.topic}</Text>
+                            <Tag color={quiz.score >= 80 ? 'success' : quiz.score >= 60 ? 'processing' : 'error'} style={{ marginLeft: 8 }}>
+                              {quiz.score}%
+                            </Tag>
+                            {quiz.improvement && quiz.improvement.improvement > 0 && (
+                              <Tag color="green" style={{ marginLeft: 8 }}>
+                                +{quiz.improvement.improvement}% Improvement
+                              </Tag>
+                            )}
+                          </Col>
+                          <Col span={12}>
+                            <Text type="secondary">Correct: {quiz.correctAnswers}/{quiz.totalQuestions}</Text>
+                          </Col>
+                          <Col span={12} style={{ textAlign: 'right' }}>
+                            <Text type="secondary">{new Date(quiz.timestamp).toLocaleDateString()}</Text>
+                          </Col>
+                        </Row>
+                      </Card>
+                    </Timeline.Item>
+                  ))}
+                </Timeline>
+              </Card>
+            </div>
+          ) : (
+            <Empty description="No quizzes completed yet" />
+          )}
+        </Card>
+      </Col>
+    </Row>
+  </div>
   );
 };
 

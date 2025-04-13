@@ -39,6 +39,9 @@ function FlashcardNew() {
   const [generatingAnswer, setGeneratingAnswer] = useState(false);
   const [confidenceRating, setConfidenceRating] = useState(0);
   const [showRating, setShowRating] = useState(false);
+  const [startTime, setStartTime] = useState(null);
+  const [cardsReviewed, setCardsReviewed] = useState(new Set());
+  const [sessionDuration, setSessionDuration] = useState(0);
 
   // Fetch subjects on mount
   useEffect(() => {
@@ -110,24 +113,38 @@ function FlashcardNew() {
       setFlashcards(topicData.subtopics[subtopic]);
       setCurrentCardIndex(0);
       setIsFlipped(false);
+      const now = Date.now();
+      setStartTime(now);
+      setCardsReviewed(new Set());
+      setSessionDuration(0);
+      console.log('Starting new flashcard session at:', new Date(now).toISOString());
     }
   };
 
   const handleConfidenceRate = async (rating) => {
     setConfidenceRating(rating);
     setShowRating(false);
+    setCardsReviewed(prev => new Set([...prev, currentCardIndex]));
 
     // Log the activity with confidence rating
     try {
+      const now = Date.now();
+      const duration = Math.round((now - startTime) / 1000); // Convert to seconds
+      const reviewedCount = cardsReviewed.size + 1; // Include current card
+      setSessionDuration(duration);
+      console.log('Logging flashcard activity - Duration:', duration, 'seconds, Cards reviewed:', reviewedCount);
       await api.post('/progress/activity', {
         type: 'flashcard',
         data: {
           subject: selectedSubject,
           topic: selectedTopic.topic,
           subtopic: selectedTopic.subtopic,
+          cardIndex: currentCardIndex,
           confidenceRating: rating,
-          cardIndex: currentCardIndex
-        }
+          cardsReviewed: reviewedCount,
+          totalCards: flashcards.length
+        },
+        duration
       });
     } catch (error) {
       console.error('Error logging confidence rating:', error);
@@ -262,6 +279,11 @@ function FlashcardNew() {
           >
             ← Back to Topics
           </Button>
+          {startTime && (
+            <Text className="study-duration">
+              Study time: {Math.round((Date.now() - startTime) / 1000)}s
+            </Text>
+          )}
           
           <div className="flashcard" onClick={handleFlip}>
             <div className={`card-content ${isFlipped ? 'flipped' : ''}`}>
