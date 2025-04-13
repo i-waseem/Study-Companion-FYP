@@ -44,13 +44,23 @@ const Progress = () => {
     flashcardProgress: {},
     subjectProgress: {}
   });
+
+  // Track collapsed state of sections
+  const [collapsedSections, setCollapsedSections] = useState({
+    subjects: {},
+    topics: {}
+  });
+
+  // Activity filters state
+  const [selectedTimeRange, setSelectedTimeRange] = useState('week');
+  const [selectedActivityType, setSelectedActivityType] = useState('all');
   
   // Activities state
   const [activities, setActivities] = useState([]);
-  const [activityStats, setActivityStats] = useState({ 
-    activityCounts: { 
-      quiz: 0, 
-      flashcard: 0, 
+  const [activityStats, setActivityStats] = useState({
+    activityCounts: {
+      quiz: 0,
+      flashcard: 0,
       career: 0,
       notes: 0
     },
@@ -61,7 +71,16 @@ const Progress = () => {
     }
   });
 
+  // Listen for quiz completion events
+  useEffect(() => {
+    const handleQuizComplete = (event) => {
+      console.log('Quiz completed, refreshing progress...', event.detail);
+      fetchData();
+    };
 
+    window.addEventListener('quizComplete', handleQuizComplete);
+    return () => window.removeEventListener('quizComplete', handleQuizComplete);
+  }, []);
 
   // Format last active time
   const formatLastActive = (timestamp) => {
@@ -80,10 +99,6 @@ const Progress = () => {
     return date.toLocaleDateString();
   };
   
-  // Filters state
-  const [selectedTimeRange, setSelectedTimeRange] = useState('week');
-  const [selectedActivityType, setSelectedActivityType] = useState('all');
-
   // Get date range based on selected time range
   const getDateRange = () => {
     const now = new Date();
@@ -512,73 +527,161 @@ return (
 
       {/* Quiz Progress */}
       <Col xs={24}>
-        <Card title={<Title level={4}><QuestionCircleOutlined /> Quiz Progress</Title>}>
-          {stats.quizzes.length > 0 ? (
-            <div>
-              <Row gutter={[16, 16]}>
-                <Col xs={24} md={8}>
-                  <Statistic
-                    title="Total Quizzes"
-                    value={stats.quizzes.length}
-                    prefix={<QuestionCircleOutlined style={{ color: '#1890ff' }} />}
-                  />
-                </Col>
-                <Col xs={24} md={8}>
-                  <Statistic
-                    title="Average Score"
-                    value={`${Math.round(stats.quizzes.reduce((acc, quiz) => acc + quiz.score, 0) / stats.quizzes.length)}%`}
-                    prefix={<TrophyOutlined style={{ color: '#52c41a' }} />}
-                  />
-                </Col>
-                <Col xs={24} md={8}>
-                  <Statistic
-                    title="Mastered Topics"
-                    value={stats.subjects.reduce((acc, subject) => 
-                      acc + subject.topics.reduce((tacc, topic) => 
-                        tacc + (topic.subtopics?.filter(st => st.status === 'mastered')?.length || 0), 0
-                      ), 0
-                    )}
-                    prefix={<TrophyOutlined style={{ color: '#722ed1' }} />}
-                  />
-                </Col>
-              </Row>
+        <Card 
+          title={
+            <div className="progress-section-header">
+              <QuestionCircleOutlined style={{ color: '#1e3c72' }} />
+              <Title level={4} style={{ margin: 0, marginLeft: 8 }}>Quiz Progress</Title>
+            </div>
+          }
+        >
+          <div className="quiz-overview">
+            <Row gutter={[24, 16]}>
+              <Col xs={8} className="stat-item">
+                <div className="stat-label">
+                  <QuestionCircleOutlined style={{ color: '#1e3c72' }} />
+                  <span>Total Quizzes</span>
+                </div>
+                <div className="stat-number">{stats.quizzes.length}</div>
+              </Col>
+              <Col xs={8} className="stat-item">
+                <div className="stat-label">
+                  <TrophyOutlined style={{ color: '#2a5298' }} />
+                  <span>Average Score</span>
+                </div>
+                <div className="stat-number">
+                  {stats.quizzes.length > 0 ? 
+                    `${Math.round(stats.quizzes.reduce((acc, quiz) => acc + quiz.score, 0) / stats.quizzes.length)}%` : 
+                    '0%'
+                  }
+                </div>
+              </Col>
+              <Col xs={8} className="stat-item">
+                <div className="stat-label">
+                  <TrophyOutlined style={{ color: '#2E8B57' }} />
+                  <span>Mastered Topics</span>
+                </div>
+                <div className="stat-number">
+                  {stats.subjects.reduce((acc, subject) => 
+                    acc + subject.topics.reduce((tacc, topic) => 
+                      tacc + (topic.subtopics?.filter(st => st.status === 'mastered')?.length || 0), 0
+                    ), 0
+                  )}
+                </div>
+              </Col>
+            </Row>
+          </div>
 
-              {/* Recent Quiz Attempts */}
-              <Card style={{ marginTop: 16 }} type="inner" title="Recent Quiz Attempts">
-                <Timeline>
-                  {stats.quizzes.slice(-5).reverse().map((quiz, index) => (
-                    <Timeline.Item 
-                      key={index}
-                      color={quiz.score >= 80 ? 'green' : quiz.score >= 60 ? 'blue' : 'red'}
+          {stats.quizzes.length > 0 ? (
+            <div className="quiz-progress-by-subject">
+              {stats.subjects.map((subject, subjectIndex) => {
+                // Filter quizzes for this subject
+                const subjectQuizzes = stats.quizzes.filter(quiz => quiz.subject === subject.name);
+                if (subjectQuizzes.length === 0) return null;
+
+                // Calculate subject-level statistics
+                const subjectAvgScore = Math.round(
+                  subjectQuizzes.reduce((acc, quiz) => acc + quiz.score, 0) / subjectQuizzes.length
+                );
+
+                return (
+                  <div key={subjectIndex} className="subject-progress-item">
+                    <div 
+                      className={`subject-row ${collapsedSections.subjects[subjectIndex] ? '' : 'expanded'}`}
+                      onClick={() => {
+                        setCollapsedSections(prev => ({
+                          ...prev,
+                          subjects: {
+                            ...prev.subjects,
+                            [subjectIndex]: !prev.subjects[subjectIndex]
+                          }
+                        }));
+                      }}
                     >
-                      <Card size="small">
-                        <Row gutter={[16, 8]}>
-                          <Col span={24}>
-                            <Text strong>{quiz.subject} - {quiz.topic}</Text>
-                            <Tag color={quiz.score >= 80 ? 'success' : quiz.score >= 60 ? 'processing' : 'error'} style={{ marginLeft: 8 }}>
-                              {quiz.score}%
-                            </Tag>
-                            {quiz.improvement && quiz.improvement.improvement > 0 && (
-                              <Tag color="green" style={{ marginLeft: 8 }}>
-                                +{quiz.improvement.improvement}% Improvement
-                              </Tag>
-                            )}
-                          </Col>
-                          <Col span={12}>
-                            <Text type="secondary">Correct: {quiz.correctAnswers}/{quiz.totalQuestions}</Text>
-                          </Col>
-                          <Col span={12} style={{ textAlign: 'right' }}>
-                            <Text type="secondary">{new Date(quiz.timestamp).toLocaleDateString()}</Text>
-                          </Col>
-                        </Row>
-                      </Card>
-                    </Timeline.Item>
-                  ))}
-                </Timeline>
-              </Card>
+                      <div className="subject-info">
+                        <div className="expand-arrow">
+                          {collapsedSections.subjects[subjectIndex] ? '▶' : '▼'}
+                        </div>
+                        <Text strong style={{ color: '#1e3c72' }}>{subject.name}</Text>
+                      </div>
+                      <div className="subject-stats">
+                        <Text type="secondary">Total: {subjectQuizzes.length}</Text>
+                        <Tag color={subjectAvgScore >= 80 ? '#2E8B57' : subjectAvgScore >= 60 ? '#2a5298' : '#1e3c72'}>
+                          Avg: {subjectAvgScore}%
+                        </Tag>
+                      </div>
+                    </div>
+                    
+                    <div className="topic-list" style={{ display: collapsedSections.subjects[subjectIndex] ? 'none' : 'block' }}>
+                      {subject.topics.map((topic, topicIndex) => {
+                        // Filter quizzes for this topic
+                        const topicQuizzes = subjectQuizzes.filter(quiz => quiz.topic === topic.name);
+                        if (topicQuizzes.length === 0) return null;
+
+                        // Calculate topic-level statistics
+                        const topicAvgScore = Math.round(
+                          topicQuizzes.reduce((acc, quiz) => acc + quiz.score, 0) / topicQuizzes.length
+                        );
+
+                        return (
+                          <div key={topicIndex} className="topic-progress-item">
+                            <div 
+                              className={`topic-row ${collapsedSections.topics[`${subjectIndex}-${topicIndex}`] ? '' : 'expanded'}`}
+                              onClick={() => {
+                                setCollapsedSections(prev => ({
+                                  ...prev,
+                                  topics: {
+                                    ...prev.topics,
+                                    [`${subjectIndex}-${topicIndex}`]: !prev.topics[`${subjectIndex}-${topicIndex}`]
+                                  }
+                                }));
+                              }}
+                            >
+                              <div className="topic-info">
+                                <div className="expand-arrow">
+                                  {collapsedSections.topics[`${subjectIndex}-${topicIndex}`] ? '▶' : '▼'}
+                                </div>
+                                <Text>{topic.name}</Text>
+                              </div>
+                              <div className="topic-stats">
+                                <Text type="secondary">Total: {topicQuizzes.length}</Text>
+                                <Tag color={topicAvgScore >= 80 ? '#2E8B57' : topicAvgScore >= 60 ? '#2a5298' : '#1e3c72'}>
+                                  Avg: {topicAvgScore}%
+                                </Tag>
+                              </div>
+                            </div>
+                            
+                            <div className="quiz-list" style={{ display: collapsedSections.topics[`${subjectIndex}-${topicIndex}`] ? 'none' : 'block' }}>
+                              {topicQuizzes.map((quiz, quizIndex) => {
+                                const date = new Date(quiz.timestamp);
+                                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                                return (
+                                  <div key={quizIndex} className="quiz-attempt">
+                                    <div className="quiz-info">
+                                      <Tag color={quiz.score >= 80 ? '#2E8B57' : quiz.score >= 60 ? '#2a5298' : '#1e3c72'}>
+                                        {quiz.correctAnswers}/{quiz.totalQuestions}
+                                      </Tag>
+                                      <Text>
+                                        Score: {quiz.score}%
+                                      </Text>
+                                    </div>
+                                    <div className="quiz-date">
+                                      <Text type="secondary">{formattedDate}</Text>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           ) : (
-            <Empty description="No quizzes completed yet" />
+            <Empty description="No quiz progress yet" />
           )}
         </Card>
       </Col>
