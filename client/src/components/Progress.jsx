@@ -3,7 +3,7 @@ import {
   Card, Row, Col, Typography, 
   Statistic, Progress as AntProgress,
   Tag, Space, Empty, Select, Spin,
-  Alert, Timeline
+  Alert, Timeline, Collapse, Badge, Tooltip
 } from 'antd';
 import { 
   TrophyOutlined, FireOutlined, ClockCircleOutlined, 
@@ -41,6 +41,7 @@ const Progress = () => {
       reviewing: 0,
       learning: 0
     },
+    flashcardProgress: {},
     subjectProgress: {}
   });
   
@@ -126,20 +127,88 @@ const Progress = () => {
         ]);
 
         if (progressRes.data) {
-          const { studyHabits = {}, quizzes = [], subjects = [], flashcards = {} } = progressRes.data;
+          const { studyHabits = {}, quizzes = [], subjects = [] } = progressRes.data;
           
+          // Process flashcard activities to calculate mastery levels
+          const flashcardActivities = (activitiesRes.data?.activities || [])
+            .filter(activity => activity.type === 'flashcard');
+
+          // Group activities by card to get latest confidence ratings
+          const cardProgress = {};
+          const detailedProgress = {};
+
+          flashcardActivities.forEach(activity => {
+            if (!activity.data) return;
+            const { subject, topic, subtopic, cardIndex, confidenceRating } = activity.data;
+            if (!subject || !topic || !subtopic || cardIndex === undefined || !confidenceRating) return;
+            
+            const cardKey = `${subject}-${topic}-${subtopic}-${cardIndex}`;
+            
+            // Only update if this is the latest rating for this card
+            if (!cardProgress[cardKey] || activity.timestamp > cardProgress[cardKey].timestamp) {
+              cardProgress[cardKey] = {
+                timestamp: activity.timestamp,
+                confidenceRating,
+                subject,
+                topic,
+                subtopic
+              };
+            }
+          });
+
+          // Calculate mastery levels based on confidence ratings
+          const totalCards = Object.keys(cardProgress).length;
+          const masteryLevels = { mastered: 0, reviewing: 0, learning: 0 };
+
+          // Organize progress by subject/topic/subtopic
+          Object.values(cardProgress).forEach(card => {
+            const { subject, topic, subtopic, confidenceRating } = card;
+
+            // Initialize structures if they don't exist
+            if (!detailedProgress[subject]) {
+              detailedProgress[subject] = {};
+            }
+            if (!detailedProgress[subject][topic]) {
+              detailedProgress[subject][topic] = {};
+            }
+            if (!detailedProgress[subject][topic][subtopic]) {
+              detailedProgress[subject][topic][subtopic] = {
+                total: 0,
+                mastered: 0,
+                reviewing: 0,
+                learning: 0
+              };
+            }
+
+            // Update counts
+            const progress = detailedProgress[subject][topic][subtopic];
+            progress.total++;
+
+            if (confidenceRating >= 5) {
+              progress.mastered++;
+              masteryLevels.mastered++;
+            } else if (confidenceRating >= 3) {
+              progress.reviewing++;
+              masteryLevels.reviewing++;
+            } else {
+              progress.learning++;
+              masteryLevels.learning++;
+            }
+          });
+
           setStats({
             quizzes,
             subjects,
             flashcards: {
-              total: flashcards.total || 0,
-              mastered: flashcards.mastered || 0,
-              reviewing: flashcards.reviewing || 0,
-              learning: flashcards.learning || 0
-            }
+              total: totalCards,
+              mastered: masteryLevels.mastered,
+              reviewing: masteryLevels.reviewing,
+              learning: masteryLevels.learning
+            },
+            flashcardProgress: detailedProgress
           });
 
-          // Update activity stats from studyHabits
+          // Update activity stats
           setActivityStats(prevStats => ({
             ...prevStats,
             totalStudyTime: studyHabits.totalStudyTime || 0,
@@ -153,39 +222,18 @@ const Progress = () => {
 
         if (activitiesRes.data) {
           setActivities(activitiesRes.data.activities || []);
-          // Set activity stats from response
-          if (activitiesRes.data.stats) {
-            const stats = activitiesRes.data.stats;
-            setActivityStats({
-              totalStudyTime: stats.studyHabits?.totalStudyTime || 0,
-              activityCounts: stats.activityCounts || {
-                quiz: 0,
-                flashcard: 0,
-                career: 0,
-                notes: 0
-              },
-              streakData: stats.studyHabits?.streakData || {
-                current: 0,
-                longest: 0,
-                lastStudied: null
-              }
-            });
-          }
+          
+          // Update activity counts
           const stats = activitiesRes.data.stats || {};
-          setActivityStats({
-            totalStudyTime: stats.totalStudyTime || 0,
+          setActivityStats(prevStats => ({
+            ...prevStats,
             activityCounts: stats.activityCounts || {
               quiz: 0,
               flashcard: 0,
               career: 0,
               notes: 0
-            },
-            streakData: stats.streakData || {
-              current: 0,
-              longest: 0,
-              lastStudied: null
             }
-          });
+          }));
         }
 
         setLoading(false);
@@ -295,70 +343,170 @@ return (
         </Card>
       </Col>
 
-      {/* Flashcard Progress */}
+      {/* Detailed Flashcard Progress */}
       <Col xs={24}>
-        <Card title={<Title level={4}><ReadOutlined /> Flashcard Progress</Title>}>
-          <Row gutter={[16, 16]}>
-            <Col xs={24} md={8}>
-              <Card className="stat-card">
-                <Statistic
-                  title="Total Flashcards"
-                  value={stats.flashcards.total}
-                  prefix={<ReadOutlined style={{ color: '#722ed1' }} />}
-                />
-                <AntProgress
-                  percent={stats.flashcards.total > 0 ? 
-                    Math.round((stats.flashcards.mastered / stats.flashcards.total) * 100) : 0
-                  }
-                  strokeColor={{
-                    '0%': '#722ed1',
-                    '100%': '#52c41a'
-                  }}
-                  style={{ marginTop: 16 }}
-                />
-              </Card>
-            </Col>
-            <Col xs={24} md={16}>
-              <Row gutter={[16, 16]}>
-                <Col span={8}>
-                  <Card className="mastery-card reviewing">
-                    <Statistic
-                      title="Reviewing"
-                      value={stats.flashcards.reviewing}
-                      suffix={stats.flashcards.total > 0 ? 
-                        `(${Math.round((stats.flashcards.reviewing / stats.flashcards.total) * 100)}%)` : 
-                        '(0%)'
-                      }
-                    />
-                  </Card>
-                </Col>
-                <Col span={8}>
-                  <Card className="mastery-card learning">
-                    <Statistic
-                      title="Learning"
-                      value={stats.flashcards.learning}
-                      suffix={stats.flashcards.total > 0 ? 
-                        `(${Math.round((stats.flashcards.learning / stats.flashcards.total) * 100)}%)` : 
-                        '(0%)'
-                      }
-                    />
-                  </Card>
-                </Col>
-                <Col span={8}>
-                  <Card className="mastery-card mastered">
-                    <Statistic
-                      title="Mastered"
-                      value={stats.flashcards.mastered}
-                      suffix={stats.flashcards.total > 0 ? 
-                        `(${Math.round((stats.flashcards.mastered / stats.flashcards.total) * 100)}%)` : 
-                        '(0%)'
-                      }
-                    />
-                  </Card>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+        <Card title={<Title level={4}><ReadOutlined /> Flashcard Progress by Subject</Title>}>
+          {Object.keys(stats.flashcardProgress || {}).length > 0 ? (
+            <Collapse>
+              {Object.entries(stats.flashcardProgress).map(([subject, topicData]) => {
+                // Calculate subject-level statistics
+                const subjectStats = Object.values(topicData).reduce((acc, topics) => {
+                  Object.values(topics).forEach(cards => {
+                    acc.total += cards.total;
+                    acc.mastered += cards.mastered;
+                    acc.reviewing += cards.reviewing;
+                    acc.learning += cards.learning;
+                  });
+                  return acc;
+                }, { total: 0, mastered: 0, reviewing: 0, learning: 0 });
+
+                return (
+                  <Collapse.Panel 
+                    key={subject} 
+                    header={
+                      <Row justify="space-between" align="middle" style={{ width: '100%' }}>
+                        <Col>
+                          <Text strong>{subject}</Text>
+                        </Col>
+                        <Col>
+                          <Space size="middle">
+                            <Tooltip title="Total Flashcards">
+                              <span>
+                                <Text type="secondary" style={{ marginRight: 4 }}>Total:</Text>
+                                <Badge count={subjectStats.total} style={{ backgroundColor: '#304979' }} />
+                              </span>
+                            </Tooltip>
+                            <Tooltip title="Cards you've mastered (5 stars)">
+                              <span>
+                                <Text type="secondary" style={{ marginRight: 4 }}>Mastered:</Text>
+                                <Badge count={subjectStats.mastered} style={{ backgroundColor: '#418f63' }} />
+                              </span>
+                            </Tooltip>
+                            <Tooltip title="Cards you're reviewing (3-4 stars)">
+                              <span>
+                                <Text type="secondary" style={{ marginRight: 4 }}>Reviewing:</Text>
+                                <Badge count={subjectStats.reviewing} style={{ backgroundColor: '#5e82c2' }} />
+                              </span>
+                            </Tooltip>
+                            <Tooltip title="Cards you're learning (1-2 stars)">
+                              <span>
+                                <Text type="secondary" style={{ marginRight: 4 }}>Learning:</Text>
+                                <Badge count={subjectStats.learning} style={{ backgroundColor: '#304979' }} />
+                              </span>
+                            </Tooltip>
+                          </Space>
+                        </Col>
+                      </Row>
+                    }
+                  >
+                    <Collapse>
+                      {Object.entries(topicData).map(([topic, subtopics]) => {
+                        // Calculate topic-level statistics
+                        const topicStats = Object.values(subtopics).reduce((acc, cards) => {
+                          acc.total += cards.total;
+                          acc.mastered += cards.mastered;
+                          acc.reviewing += cards.reviewing;
+                          acc.learning += cards.learning;
+                          return acc;
+                        }, { total: 0, mastered: 0, reviewing: 0, learning: 0 });
+
+                        return (
+                          <Collapse.Panel 
+                            key={topic}
+                            header={
+                              <Row justify="space-between" align="middle" style={{ width: '100%' }}>
+                                <Col>
+                                  <Text>{topic}</Text>
+                                </Col>
+                                <Col>
+                                  <Space size="middle">
+                                    <Tooltip title="Total Flashcards">
+                                      <span>
+                                        <Text type="secondary" style={{ marginRight: 4 }}>Total:</Text>
+                                        <Badge count={topicStats.total} style={{ backgroundColor: '#304979' }} />
+                                      </span>
+                                    </Tooltip>
+                                    <Tooltip title="Cards you've mastered (5 stars)">
+                                      <span>
+                                        <Text type="secondary" style={{ marginRight: 4 }}>Mastered:</Text>
+                                        <Badge count={topicStats.mastered} style={{ backgroundColor: '#418f63' }} />
+                                      </span>
+                                    </Tooltip>
+                                    <Tooltip title="Cards you're reviewing (3-4 stars)">
+                                      <span>
+                                        <Text type="secondary" style={{ marginRight: 4 }}>Reviewing:</Text>
+                                        <Badge count={topicStats.reviewing} style={{ backgroundColor: '#5e82c2' }} />
+                                      </span>
+                                    </Tooltip>
+                                    <Tooltip title="Cards you're learning (1-2 stars)">
+                                      <span>
+                                        <Text type="secondary" style={{ marginRight: 4 }}>Learning:</Text>
+                                        <Badge count={topicStats.learning} style={{ backgroundColor: '#304979' }} />
+                                      </span>
+                                    </Tooltip>
+                                  </Space>
+                                </Col>
+                              </Row>
+                            }
+                          >
+                            {Object.entries(subtopics).map(([subtopic, cards]) => (
+                              <Card key={subtopic} style={{ marginBottom: '12px' }}>
+                                <Row justify="space-between" align="middle">
+                                  <Col>
+                                    <Text strong>{subtopic}</Text>
+                                  </Col>
+                                  <Col>
+                                    <Space size="middle">
+                                      <Tooltip title="Total number of flashcards in this subtopic">
+                                        <span>
+                                          <Text type="secondary" style={{ marginRight: 4 }}>Total:</Text>
+                                          <Badge count={cards.total} style={{ backgroundColor: '#304979' }} />
+                                        </span>
+                                      </Tooltip>
+                                      <Tooltip title="Cards you've mastered completely (5 stars)">
+                                        <span>
+                                          <Text type="secondary" style={{ marginRight: 4 }}>Mastered:</Text>
+                                          <Badge count={cards.mastered} style={{ backgroundColor: '#418f63' }} />
+                                        </span>
+                                      </Tooltip>
+                                      <Tooltip title="Cards you're getting better at (3-4 stars)">
+                                        <span>
+                                          <Text type="secondary" style={{ marginRight: 4 }}>Reviewing:</Text>
+                                          <Badge count={cards.reviewing} style={{ backgroundColor: '#5e82c2' }} />
+                                        </span>
+                                      </Tooltip>
+                                      <Tooltip title="Cards you're still learning (1-2 stars)">
+                                        <span>
+                                          <Text type="secondary" style={{ marginRight: 4 }}>Learning:</Text>
+                                          <Badge count={cards.learning} style={{ backgroundColor: '#304979' }} />
+                                        </span>
+                                      </Tooltip>
+                                    </Space>
+                                  </Col>
+                                </Row>
+                                <AntProgress 
+                                  percent={100} 
+                                  success={{ percent: (cards.mastered / cards.total) * 100 }}
+                                  strokeColor={{
+                                    '0%': '#304979',
+                                    '50%': '#5e82c2',
+                                    '100%': '#418f63'
+                                  }}
+                                  style={{ marginTop: '8px' }}
+                                />
+                              </Card>
+                            ))}
+                          </Collapse.Panel>
+                        );
+                      })}
+                    </Collapse>
+                  </Collapse.Panel>
+                );
+              })}
+            </Collapse>
+          ) : (
+            <Empty description="No flashcard progress yet" />
+          )}
         </Card>
       </Col>
 

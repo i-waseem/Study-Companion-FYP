@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Typography, Button, Spin, Space } from 'antd';
+import { Card, Typography, Button, Spin, Space, Rate, Tooltip } from 'antd';
 import { BookOutlined, CodeOutlined, LineChartOutlined } from '@ant-design/icons';
 import api from '../api/config';
 import './FlashcardNew.css';
@@ -316,20 +316,28 @@ function FlashcardNew() {
 
           {showRating ? (
             <div className="confidence-rating">
-              <Text>How confident are you with this answer?</Text>
-              <div className="rating-buttons">
-                {[1, 2, 3, 4, 5].map((rating) => (
-                  <Button
-                    key={rating}
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent event bubbling
-                      handleConfidenceRate(rating);
-                    }}
-                    className={`rating-button rating-${rating}`}
-                  >
-                    {rating}
-                  </Button>
-                ))}
+              <Text>How well did you know this?</Text>
+              <div className="rating-description">
+                <Rate
+                  character={({ index }) => (
+                    <Tooltip title={[
+                      'Did not know it at all',
+                      'Remembered with difficulty',
+                      'Had to think about it',
+                      'Knew it well',
+                      'Knew it perfectly'
+                    ][index]}>
+                      ⭐
+                    </Tooltip>
+                  )}
+                  onChange={(rating) => {
+                    handleConfidenceRate(rating);
+                  }}
+                  style={{ fontSize: '24px' }}
+                />
+                <Text type="secondary" style={{ marginTop: '8px', display: 'block' }}>
+                  1 star: Still learning | 3 stars: Reviewing | 5 stars: Mastered
+                </Text>
               </div>
             </div>
           ) : (
