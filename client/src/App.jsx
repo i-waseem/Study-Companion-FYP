@@ -14,6 +14,7 @@ import Notes from './components/Notes';
 import CareerGuidance from './components/CareerGuidance';
 import Feedback from './components/Feedback';
 import ProfileSettings from './components/ProfileSettings';
+import About from './components/About';
 import Dashboard from './components/Dashboard';
 import './App.css';
 
@@ -93,6 +94,11 @@ function AppRoutes() {
           <Route path="/profile-settings" element={
             <ProtectedRoute>
               <ProfileSettings />
+            </ProtectedRoute>
+          } />
+          <Route path="/about" element={
+            <ProtectedRoute>
+              <About />
             </ProtectedRoute>
           } />
         </Routes>

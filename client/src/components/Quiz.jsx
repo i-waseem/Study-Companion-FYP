@@ -140,44 +140,31 @@ function Quiz() {
         });
 
         // Record detailed quiz progress
-        const quizScore = Math.round((score / questions.length) * 100);
-        
         await api.post('/progress/quiz', {
           subject,
           topic,
           subtopic,
-          score: quizScore,
+          score: Math.round((score / questions.length) * 100),
           totalQuestions: questions.length,
           correctAnswers: score,
-          weakAreas: incorrectAnswers.map(wrong => wrong.question)
+          questionDetails,
+          duration
         });
 
-        // Record activity
+        // Log quiz activity for progress tracking
         await api.post('/progress/activity', {
           type: 'quiz',
           data: {
             subject,
             topic,
             subtopic,
-            score: quizScore,
+            score: Math.round((score / questions.length) * 100),
             totalQuestions: questions.length,
             correctAnswers: score,
             weakAreas: incorrectAnswers.map(wrong => wrong.question)
           },
           duration
         });
-
-        // Dispatch event to notify Progress component
-        window.dispatchEvent(new CustomEvent('quizComplete', { 
-          detail: { 
-            subject, 
-            topic, 
-            score: quizScore,
-            totalQuestions: questions.length,
-            correctAnswers: score,
-            timestamp: new Date().toISOString()
-          } 
-        }));
       } catch (err) {
         console.error('Error recording quiz progress:', err);
       }

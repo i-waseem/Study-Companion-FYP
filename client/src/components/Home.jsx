@@ -198,8 +198,8 @@ function Home() {
                 hoverable
               >
                 <TrophyOutlined className="card-icon" />
-                <h3>Dashboard</h3>
-                <p>View your progress</p>
+                <h3>Provide Feedback</h3>
+                <p>Help us improve</p>
               </Card>
             </Col>
           </Row>
@@ -239,11 +239,11 @@ function Home() {
                   items={[
                     {
                       dot: <BookOutlined />,
-                      children: 'Completed Mathematics Quiz - 85%'
+                      children: 'Completed Economics Quiz - 85%'
                     },
                     {
                       dot: <BulbOutlined />,
-                      children: 'Created new Physics flashcards'
+                      children: 'Created notes'
                     },
                     {
                       dot: <RocketOutlined />,

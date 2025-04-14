@@ -32,12 +32,13 @@ function Sidebar() {
       </div>
 
       <nav className="sidebar-nav">
-        <Link to="/" className={`nav-item ${isActive('/')}`}>
-          Home
+      <Link to="/about" className={`nav-item ${isActive('/about')}`}>
+          About
         </Link>
-        <Link to="/dashboard" className={`nav-item ${isActive('/dashboard')}`}>
+        <Link to="/" className={`nav-item ${isActive('/')}`}>
           Dashboard
         </Link>
+
         <Link to="/subjects" className={`nav-item ${isActive('/subjects')}`}>
           Subjects
         </Link>
@@ -59,6 +60,7 @@ function Sidebar() {
         <Link to="/feedback" className={`nav-item ${isActive('/feedback')}`}>
           Feedback
         </Link>
+   
         <Link to="/profile-settings" className={`nav-item ${isActive('/profile-settings')}`}>
           Settings
         </Link>
